@@ -5,6 +5,8 @@ function i_shark()
     state='patrol'; -- patrol, chase, attacking, dead
     x=20;
     y=20;
+    w=16;
+    h=8;
     speed=.3;
     flip_x=true; -- left
     patrol_t=0;
@@ -21,10 +23,15 @@ function i_shark()
 
     update=function(self)
       local dist_to_player = dst(self, tgsub)
-      local collide_with_sub_left = check_collision(self.x-1, self.y, 16, 8, tgsub.x, tgsub.y, 16, 16)
-      local collide_with_sub_right = check_collision(self.x+1, self.y, 16, 8, tgsub.x, tgsub.y, 16, 16)
-      local collide_with_sub_top = check_collision(self.x, self.y-1, 16, 8, tgsub.x, tgsub.y, 16, 16)
-      local collide_with_sub_bottom = check_collision(self.x, self.y+1, 16, 8, tgsub.x, tgsub.y, 16, 16)
+      local col_sub_left = check_collision(self, tgsub)
+      local col_sub_right = check_collision(self, tgsub)
+      local col_sub_top = check_collision(self, tgsub)
+      local col_sub_bottom = check_collision(self, tgsub)
+
+      local col_world_left = collide_map(self, 'left', 0)
+      local col_world_right = collide_map(self, 'right', 0)
+      local col_world_top = collide_map(self, 'top', 0)
+      local col_world_bottom = collide_map(self, 'bottom', 0)
 
       -- check for collision with world tiles
 
@@ -36,6 +43,15 @@ function i_shark()
           sfx(1)
         end
       end
+
+
+      -- watch for tgsub and give chase
+      if (dist_to_player < 45) then
+        self.state = 'chase'
+      else
+        self.state = 'patrol'
+      end
+
 
       if (self.state == 'patrol') then
         if (self.patrol_t < patrol_time) then
@@ -54,37 +70,40 @@ function i_shark()
       if (self.state == 'chase' or self.state == 'attacking') then
         if (self.x < tgsub.x) then
           self.flip_x = true
-          if (not collide_with_sub_right) then
-            self.x+=self.speed
-          else
+          if (col_sub_right) then
             self.state = 'attacking'
             self.x-=self.speed+5
             tgsub.crash()
+          elseif (not col_world_right) then
+            self.x+=self.speed
           end
         elseif (self.x > tgsub.x) then
           self.flip_x = false
-          if (not collide_with_sub_left) then
-            self.x-=self.speed
-          else
+          if (col_sub_left) then
             self.state = 'attacking'
             self.x+=self.speed+5
+            tgsub.crash()
+          elseif (not col_world_left) then
+            self.x-=self.speed
+          end
+        end
+
+        if (self.y < tgsub.y) then
+          if (not col_world_bottom) then
+            self.y+=self.speed
+          elseif (col_sub_bottom) then
+            self.y-=self.speed+5
+            tgsub.crash()
+          end
+        elseif (self.y > tgsub.y) then
+          if (not col_world_top) then
+            self.y-=self.speed
+          elseif (col_sub_top) then
+            self.y+=self.speed+5
             tgsub.crash()
           end
         end
 
-        if (self.y < tgsub.y and not collide_with_sub_bottom) then
-          self.y+=self.speed
-        elseif (self.y > tgsub.y and not collide_with_sub_top) then
-          self.y-=self.speed
-        end
-
-      end
-
-      -- watch for tgsub and give chase
-      if (dist_to_player < 45) then
-        self.state = 'chase'
-      else
-        self.state = 'patrol'
       end
 
       self:animate(3)
@@ -93,7 +112,7 @@ function i_shark()
     draw=function(self)
 
       -- DEBUGGING
-      -- print('state: '..self.state, self.x-2, self.y-10, 11)
+      print(self.state, self.x-2, self.y-10, 11)
       -- print('dist: '..dst(self, tgsub), self.x-2, self.y-2, 11)
       -- print('patrol_t: '..self.patrol_t, self.x-2, self.y-2, 11)
 

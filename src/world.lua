@@ -4,11 +4,13 @@ function i_world()
   world.water_surface=28
 
   shark1 = shark(50, 160)
+  shark2 = shark(160, 130)
 end
 
 function u_world()
   -- update sharks
   shark1:update()
+  shark2:update()
 end
 
 function d_world()
@@ -26,6 +28,7 @@ function d_world()
 
   -- draw sharks
   shark1:draw()
+  shark2:draw()
 end
 
 
