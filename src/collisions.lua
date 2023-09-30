@@ -38,6 +38,15 @@ function collide_map(p,dir,flag)
   end
 end
 
+function container_collide(collection)
+	-- check for collision with containers to open
+	for k,cont in ipairs(collection) do
+		if (check_collision(player.diver.x, player.diver.y, 16, 16, cont.x, cont.y, 8, 8)) then
+			return true
+		end
+	end
+end
+
 -- Collision detection function;
 -- Returns true if two boxes overlap, false if they don't;
 -- x1,y1 are the top-left coords of the first box, while w1,h1 are its width and height;
