@@ -35,7 +35,7 @@ function i_dyn_objs()
 
       -- if treasure is hooked, move with claw
       if (self.is_hooked) then
-        self.x = tgsub.claw.x
+        self.x = tgsub.claw.x-4
         self.y = tgsub.claw.y
       end
 
@@ -95,7 +95,6 @@ function i_dyn_objs()
       -- if treasure is not carried, collide with world
       if (self.is_carried or collide_map(self, 'down', 0)) then
         self.dy = 0
-        sfx(7)
       else
         self.y+=.2
       end
@@ -109,7 +108,7 @@ function i_dyn_objs()
 
       -- if treasure is hooked, move with claw
       if (self.is_hooked) then
-        self.x = tgsub.claw.x
+        self.x = tgsub.claw.x-4
         self.y = tgsub.claw.y
       end
 

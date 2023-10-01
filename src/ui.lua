@@ -18,6 +18,8 @@ function d_ui()
     hull_color = 8 -- bad
   end
 
+  print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+2, 7)
+
   -- hull
   print('HULL', cam.x+2, cam.y+120, 10)
   line(cam.x+2+x_off, cam.y+121+y_off, cam.x+tgsub.hull+x_off, cam.y+121+y_off, hull_color)

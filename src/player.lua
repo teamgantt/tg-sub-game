@@ -219,7 +219,7 @@ function u_player()
 
   -- if treasure is hooked, move with claw
   if (player.diver.is_hooked) then
-    player.diver.x = tgsub.claw.x
+    player.diver.x = tgsub.claw.x-4
     player.diver.y = tgsub.claw.y
   end
 end
