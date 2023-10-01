@@ -2,7 +2,8 @@ function i_player()
   map_start=0
   map_end=256
   diver_friction=.75
-  diver_gravity=0.05
+  diver_gravity=0.2
+  diver_jump_power=0.2
   diver_fall_gravity=0.5
   jump_boost=5
   tick=0
@@ -31,7 +32,7 @@ function i_player()
   player.diver.walk_frames={4,5,6,5}
 
   player.diver.jump = function(self)
-    self.jump_t = 60
+    self.jump_t = 30
     self.jumping = true
     diver_bubbles.step(.05)
     diver_bubbles.step(.02, 60)
@@ -70,7 +71,6 @@ function u_player()
     diver.o2 = 60
   elseif (btnp(❎) and player.mode == 'diver') then
     player.mode = 'tgsub'
-    player.diver.o2 = 60
   end
 
   --apply controls
@@ -178,7 +178,7 @@ function u_player()
 
   if player.diver.jump_t > 0 and player.diver.jumping then
     player.diver.jump_t-=1
-    player.diver.dy-=.1
+    player.diver.dy-=diver_jump_power
   else
     player.diver.dy+=diver_gravity
   end
@@ -203,6 +203,10 @@ function d_player()
   if (player.mode == 'diver') then
     if (diver.walking) then
       spr(diver.walk_frames[flr(walk_anim.f)], diver.x, diver.y, 1, 1, diver.flipx)
+    elseif (diver.dy < 0) then
+      spr(7, diver.x, diver.y, 1, 1, diver.flipx)
+    elseif (not diver.on_ground) then
+      spr(8, diver.x, diver.y, 1, 1, diver.flipx)
     else
       spr(3, diver.x, diver.y, 1, 1, diver.flipx)
     end
