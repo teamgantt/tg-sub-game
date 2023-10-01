@@ -5,6 +5,8 @@ function i_dyn_objs()
       self.y = y
       self.w = 8
       self.h = 8
+      self.dy = 0
+      self.is_hooked = false
       self.img = 59 -- closed chest
       self.open = false
     end,
@@ -23,8 +25,28 @@ function i_dyn_objs()
           add(world.treasures, treasure)
         end
       end
+      -- collide with sub claw
+      if (not tgsub.claw.is_open and check_collision(self, tgsub.claw)) then
+        self.is_hooked = true
+        tgsub.claw.cargo = self
+      else
+        self.is_hooked = false
+      end
+
+      -- if treasure is hooked, move with claw
+      if (self.is_hooked) then
+        self.x = tgsub.claw.x
+        self.y = tgsub.claw.y
+      end
+
+      if (self.is_hooked or collide_map(self, 'down', 0)) then
+        self.dy = 0
+      else
+        self.y+=.2
+      end
     end,
     draw = function(self)
+      -- print('is_hooked: '..tostr(self.is_hooked), self.x-8, self.y-18, 7)
       spr(self.img, self.x, self.y)
     end,
   }
@@ -73,13 +95,32 @@ function i_dyn_objs()
       -- if treasure is not carried, collide with world
       if (self.is_carried or collide_map(self, 'down', 0)) then
         self.dy = 0
+        sfx(7)
       else
         self.y+=.2
       end
+     -- collide with sub claw
+     if (not tgsub.claw.is_open and check_collision(self, tgsub.claw)) then
+        self.is_hooked = true
+        tgsub.claw.cargo = self
+      else
+        self.is_hooked = false
+      end
 
+      -- if treasure is hooked, move with claw
+      if (self.is_hooked) then
+        self.x = tgsub.claw.x
+        self.y = tgsub.claw.y
+      end
+
+      if (self.is_hooked or collide_map(self, 'down', 0)) then
+        self.dy = 0
+      else
+        self.y+=.2
+      end
     end,
     draw = function(self)
-      print('is_carried: '..tostr(self.is_carried), self.x-8, self.y-18, 7)
+      -- print('is_carried: '..tostr(self.is_carried), self.x-8, self.y-18, 7)
       if player.mode == 'diver' then
         if self.show_hint and not self.is_carried then
           print('⬇️ GRAB', self.x-8, self.y-10, 7)

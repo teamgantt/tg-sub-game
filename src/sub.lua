@@ -13,6 +13,14 @@ function i_sub()
   tgsub.max_dy = 0.5
   tgsub.speed = 0.5
   tgsub.flipx = false
+  tgsub.claw_len = 0
+  tgsub.claw={}
+  tgsub.claw.x=0
+  tgsub.claw.y=0
+  tgsub.claw.w=8
+  tgsub.claw.h=8
+  tgsub.claw.is_open=true
+  tgsub.claw.cargo=nil
   tgsub.crash = function(self)
     shake_int = 6
     sfx(4)
@@ -47,12 +55,6 @@ function u_sub()
   tgsub.dy*=sub_friction
   tgsub.dx*=sub_friction
 
-  -- activate diver mode
-  -- if (btnp(❎) and player.mode == 'diver') then
-  --   player.mode = 'tgsub'
-  --   player.diver.o2 = 100
-  -- end
-
   --apply controls
   if (btn(⬅️) and player.mode == 'tgsub') then
     -- first slow down
@@ -83,16 +85,41 @@ function u_sub()
 
 
   -- no left or right
-	if (btn(⬇️) and player.mode != 'diver' and not collide_map(tgsub, 'down', 0)) then
+	if (not btn(🅾️) and btn(⬇️) and player.mode != 'diver' and not collide_map(tgsub, 'down', 0)) then
     tgsub.dy+=tgsub.speed
     prop_bubbles.step(.03, 90)
     sfx(2)
 	end
 
-  if (btn(⬆️) and player.mode != 'diver' and not collide_map(tgsub, 'up', 0)) then
+  if not btn(🅾️) and (btn(⬆️) and player.mode != 'diver' and not collide_map(tgsub, 'up', 0)) then
     tgsub.dy-=tgsub.speed
     prop_bubbles.step(.03, 90)
     sfx(2)
+  end
+
+  --if holding z lower claw
+  if (btn(🅾️) and player.mode == 'tgsub') then
+    -- holding z an pressing down lowers claw
+    tgsub.claw.is_open = false
+
+    if (btn(⬇️)) then
+      tgsub.claw_len+=.5
+    end
+
+    -- holding z and pressing up raises claw
+    if (btn(⬆️)) then
+      if not tgsub.claw.cargo or tgsub.claw_len > 0 then
+        tgsub.claw_len-=.5
+      end
+    end
+
+    -- sync claw position with claw_len
+    tgsub.claw.x = tgsub.x+8
+    tgsub.claw.y = tgsub.y+8+tgsub.claw_len
+  else
+    -- release z to open claw
+    tgsub.claw.cargo = nil
+    tgsub.claw.is_open = true
   end
 
   -- SUB MODE
@@ -131,15 +158,18 @@ function u_sub()
   -- collide with player to pick up
   if (check_collision(tgsub, player.diver)) then
     player.mode = 'tgsub'
+    player.diver_active = false
     player.diver.x = 0
     player.diver.y = 0
-    player.diver.o2 = 100
+    player.diver.o2 = 60
     sfx(3)
   end
 
   --apply dx and dy to player position
   tgsub.x+=tgsub.dx
   tgsub.y+=tgsub.dy
+
+  prop_bubbles.step(.005)
 
   --limit player to map
   if tgsub.x<map_start then
@@ -168,11 +198,21 @@ function d_sub()
   cam.x=mid(map_start, cam.x,map_end)
   cam.y=mid(map_start, cam.y,1024)
 
+  print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+2, 7)
+
   -- order is important for camera reset
   camera(cam.x, cam.y)
   beforedraw()
 
-  -- shake screen
+  -- draw claw
+  if (tgsub.claw_len > 0) then
+    local claw_x = tgsub.x+8
+    local claw_y = tgsub.y+8
+    local img = 46
+    if (not tgsub.claw.is_open) img=47
+    line(claw_x, claw_y, claw_x, claw_y+tgsub.claw_len, 6)
+    spr(img, claw_x-4, claw_y+tgsub.claw_len, 1, 1)
+  end
 
   spr(1, tgsub.x, tgsub.y, 2, 2, tgsub.flipx)
 

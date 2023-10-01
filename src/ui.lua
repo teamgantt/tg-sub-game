@@ -23,7 +23,7 @@ function d_ui()
   line(cam.x+2+x_off, cam.y+121+y_off, cam.x+tgsub.hull+x_off, cam.y+121+y_off, hull_color)
   rect(cam.x+2+x_off, cam.y+120+y_off, cam.x+100+x_off, cam.y+122+y_off, 7)
 
-  if (player.mode == 'diver') then
+  if (player.diver_active) then
     -- diver o2
     print('AIR', cam.x+2, cam.y+115, 12)
     line(cam.x+3+x_off, cam.y+116+y_off, cam.x+player.diver.o2+x_off, cam.y+116+y_off, 12)

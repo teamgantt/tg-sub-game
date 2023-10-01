@@ -15,6 +15,7 @@ function i_player()
 
   player = {}
   player.mode = 'tgsub' -- tgsub, diver
+  player.diver_active = false
   player.diver = {}
   player.diver.jump_t = 0
   player.diver.holding_jump=false
@@ -30,6 +31,14 @@ function i_player()
   player.diver.speed = 0.4
   player.diver.o2 = 0
   player.diver.walk_frames={4,5,6,5}
+  player.diver.reset_position = function(self)
+    --self=player.diver
+    self.x = 0
+    self.y = 0
+    self.dx = 0
+    self.dy = 0
+    self.o2 = 60
+  end
 
   player.diver.jump = function(self)
     self.jump_t = 30
@@ -43,7 +52,7 @@ function i_player()
 		elapsed=0,
 		step=function(timing)
 			diver_bubbles.elapsed+=timing
-			if (player.mode == 'diver' and diver_bubbles.elapsed >= 1) then
+			if (player.diver_active and diver_bubbles.elapsed >= 1) then
 				diver_bubbles.elapsed=0
         sfx(3)
         add_bubble(player.diver.x+4, player.diver.y +2,'l', rnd_between(20,60))
@@ -62,8 +71,11 @@ function u_player()
   -- activate diver mode
   if (btnp(❎) and player.mode == 'tgsub') then
     player.mode = 'diver'
-    diver.x = tgsub.x+8
-    diver.y = tgsub.y+16
+    player.diver_active = true
+    if (diver.x<1) then
+      diver.x = tgsub.x+8
+      diver.y = tgsub.y+16
+    end
     diver.w = 8
     diver.h = 8
     diver.dx = 0
@@ -73,21 +85,32 @@ function u_player()
     player.mode = 'tgsub'
   end
 
-  --apply controls
-  if (btn(⬅️) and player.mode == 'diver') then
-    diver.flipx = true
-    diver.walking = true
-    diver.dx-=diver.speed
-    diver_bubbles.step(.045)
-    sfx(1)
-  end
+  if (player.diver_active and player.mode == 'diver') then
+    --apply controls
+    if (btn(⬅️) and player.mode == 'diver') then
+      diver.flipx = true
+      diver.walking = true
+      diver.dx-=diver.speed
+      diver_bubbles.step(.045)
+      sfx(1)
+    end
 
-  if (btn(➡️) and player.mode == 'diver') then
-    diver.flipx = false
-    diver.walking = true
-    diver.dx+=diver.speed
-    diver_bubbles.step(.045)
-    sfx(1)
+    if (btn(➡️) and player.mode == 'diver') then
+      diver.flipx = false
+      diver.walking = true
+      diver.dx+=diver.speed
+      diver_bubbles.step(.045)
+      sfx(1)
+    end
+
+
+    if (btn(⬇️) and not collide_map(tgsub, 'down', 0)) then
+      diver.dy+=diver.speed
+    end
+
+    if (btnp(⬆️) and diver.on_ground) then
+      diver:jump()
+    end
   end
 
   -- no left or right
@@ -95,11 +118,6 @@ function u_player()
     diver_bubbles.step(.0055)
     diver.walking = false
   end
-
-	if (btn(⬇️) and not collide_map(tgsub, 'down', 0)) then
-      diver.dy+=diver.speed
-	end
-
 
   -- DIVER MODE
   --animate player walk
@@ -114,9 +132,6 @@ function u_player()
   end
 
   -- apply diver movement
-  if (btnp(⬆️) and diver.on_ground) then
-    diver:jump()
-  end
 
   if diver.dy>0 then
     diver.dy=limit_speed(diver.dy,diver.speed)
@@ -166,9 +181,6 @@ function u_player()
     diver.y=world.water_surface-2
   end
 
-
-  prop_bubbles.step(.005)
-
   -- tick every 60 frames
   if (tick >= 60) then
     tick=0
@@ -184,7 +196,7 @@ function u_player()
   end
 
   -- O2 bar updates
-  if (player.mode == 'diver') then
+  if (player.diver_active) then
     -- for every second drop o2
     if (tick == 0) then
       player.diver.o2-=1
@@ -192,15 +204,30 @@ function u_player()
 
     if (player.diver.o2 <= 0) then
       player.mode = 'tgsub'
+      player.diver_active = false
+      player.diver:reset_position()
     end
+  end
+
+   -- collide with sub claw
+   if (not tgsub.claw.is_open and check_collision(player.diver, tgsub.claw)) then
+    player.diver.is_hooked = true
+    tgsub.claw.cargo = player.diver
+  else
+    player.diver.is_hooked = false
+  end
+
+  -- if treasure is hooked, move with claw
+  if (player.diver.is_hooked) then
+    player.diver.x = tgsub.claw.x
+    player.diver.y = tgsub.claw.y
   end
 end
 
 function d_player()
   local diver = player.diver
 
-
-  if (player.mode == 'diver') then
+  if (player.diver_active) then
     if (diver.walking) then
       spr(diver.walk_frames[flr(walk_anim.f)], diver.x, diver.y, 1, 1, diver.flipx)
     elseif (diver.dy < 0) then
