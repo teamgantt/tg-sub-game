@@ -112,7 +112,7 @@ function i_shark()
     draw=function(self)
 
       -- DEBUGGING
-      print(self.state, self.x-2, self.y-10, 11)
+      -- print(self.state, self.x-2, self.y-10, 11)
       -- print('dist: '..dst(self, tgsub), self.x-2, self.y-2, 11)
       -- print('patrol_t: '..self.patrol_t, self.x-2, self.y-2, 11)
 
