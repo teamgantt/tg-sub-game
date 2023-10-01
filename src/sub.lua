@@ -103,10 +103,13 @@ function u_sub()
 
     if (btn(⬇️)) then
       tgsub.claw_len+=.5
+      sfx(8)
     end
   elseif not btn(🅾️) then
     if (tgsub.claw_len > 0) tgsub.claw_len-=.5
+    if (tgsub.claw.is_open) sfx(5)
     tgsub.claw.is_open = false
+
     -- -- release z to open claw
     tgsub.claw.cargo = nil
     -- if tgsub.claw.cargo then

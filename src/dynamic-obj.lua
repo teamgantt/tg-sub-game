@@ -26,7 +26,7 @@ function i_dyn_objs()
         end
       end
       -- collide with sub claw
-      if (not tgsub.claw.is_open and check_collision(self, tgsub.claw)) then
+      if (not tgsub.claw.is_open and not tgsub.cargo and check_collision(self, tgsub.claw)) then
         self.is_hooked = true
         tgsub.claw.cargo = self
       else
@@ -99,7 +99,7 @@ function i_dyn_objs()
         self.y+=.2
       end
      -- collide with sub claw
-     if (not tgsub.claw.is_open and check_collision(self, tgsub.claw)) then
+     if (not tgsub.claw.is_open and not tgsub.cargo and check_collision(self, tgsub.claw)) then
         self.is_hooked = true
         tgsub.claw.cargo = self
       else
