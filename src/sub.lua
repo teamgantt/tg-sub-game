@@ -128,6 +128,15 @@ function u_sub()
     end
   end
 
+  -- collide with player to pick up
+  if (check_collision(tgsub, player.diver)) then
+    player.mode = 'tgsub'
+    player.diver.x = 0
+    player.diver.y = 0
+    player.diver.o2 = 100
+    sfx(3)
+  end
+
   --apply dx and dy to player position
   tgsub.x+=tgsub.dx
   tgsub.y+=tgsub.dy
