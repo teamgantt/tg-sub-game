@@ -18,7 +18,10 @@ function d_ui()
     hull_color = 8 -- bad
   end
 
-  print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+2, 7)
+
+  -- current mode
+  print("mode: "..player.mode, cam.x+2, cam.y+2, 9)
+  print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+8, 7)
 
   -- hull
   print('HULL', cam.x+2, cam.y+120, 10)

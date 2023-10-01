@@ -16,7 +16,7 @@ function i_dyn_objs()
       end
 
       if (check_collision(self, player.diver)) then
-        if (btn(⬇️) and not self.open) then
+        if (player.mode == 'diver' and btn(⬇️) and not self.open) then
           self.open = true
           sfx(5)
 

@@ -8,7 +8,7 @@ function i_world()
   world.treasures={}
 
   shark1 = shark(160, 160)
-  shark2 = shark(160, 130)
+  shark2 = shark(280, 180)
 
   -- setup dynamic objects
   -- loop over all map tiles and create objects

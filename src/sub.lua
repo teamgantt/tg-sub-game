@@ -56,7 +56,7 @@ function u_sub()
   tgsub.dx*=sub_friction
 
   --apply controls
-  if (btn(⬅️) and player.mode == 'tgsub') then
+  if (btn(⬅️) and player.mode == 'sub') then
     -- first slow down
     if tgsub.dx > .1 then tgsub.dx*=sub_friction
     else
@@ -71,7 +71,7 @@ function u_sub()
 	end -- left
 
 
-	if (btn(➡️) and player.mode == 'tgsub') then
+	if (btn(➡️) and player.mode == 'sub') then
     if tgsub.dx < -.1 then tgsub.dx*=sub_friction
     else
       tgsub.dx+=tgsub.speed
@@ -97,7 +97,7 @@ function u_sub()
   end
 
   --if holding z lower claw
-  if (btn(🅾️) and player.mode == 'tgsub') then
+  if (btn(🅾️) and player.mode == 'sub') then
     -- holding z an pressing down lowers claw
     tgsub.claw.is_open = true
 
@@ -105,12 +105,12 @@ function u_sub()
       tgsub.claw_len+=.5
     end
   elseif not btn(🅾️) then
-    if not tgsub.claw.cargo or tgsub.claw_len > 0 then
-      tgsub.claw_len-=.5
-      tgsub.claw.is_open = false
-      -- -- release z to open claw
-      tgsub.claw.cargo = nil
-    end
+    if (tgsub.claw_len > 0) tgsub.claw_len-=.5
+    tgsub.claw.is_open = false
+    -- -- release z to open claw
+    tgsub.claw.cargo = nil
+    -- if tgsub.claw.cargo then
+    -- end
   end
 
   -- sync claw position with claw_len
@@ -152,10 +152,8 @@ function u_sub()
 
   -- collide with player to pick up
   if (check_collision(tgsub, player.diver)) then
-    player.mode = 'tgsub'
+    player.mode = 'sub'
     player.diver_active = false
-    player.diver.x = 0
-    player.diver.y = 0
     player.diver.o2 = 60
     sfx(3)
   end
@@ -183,7 +181,7 @@ function u_sub()
 end
 
 function d_sub()
-  if (player.mode == 'tgsub') then
+  if (player.mode == 'sub') then
     cam.x=tgsub.x-60
     cam.y=tgsub.y-60
   else
@@ -211,6 +209,7 @@ function d_sub()
 
   -- draw tgsub hitbox
   -- rect(tgsub.x, tgsub.y, tgsub.x+tgsub.w, tgsub.y+tgsub.h, 8)
+  -- print("claw len: "..tgsub.claw_len, cam.x+2, cam.y+12, 8)
 
   afterdraw()
   if shake_int > 0 then shake() end

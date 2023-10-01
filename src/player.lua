@@ -14,7 +14,7 @@ function i_player()
 	}
 
   player = {}
-  player.mode = 'tgsub' -- tgsub, diver
+  player.mode = 'sub' -- sub, diver
   player.diver_active = false
   player.diver = {}
   player.diver.jump_t = 0
@@ -69,20 +69,20 @@ function u_player()
   diver.dy*=diver_friction
 
   -- activate diver mode
-  if (btnp(❎) and player.mode == 'tgsub') then
+  if (btnp(❎) and player.mode == 'sub') then
     player.mode = 'diver'
-    player.diver_active = true
-    if (diver.x<1) then
+    if (not player.diver_active) then
       diver.x = tgsub.x+8
       diver.y = tgsub.y+16
     end
+    player.diver_active = true
     diver.w = 8
     diver.h = 8
     diver.dx = 0
     diver.dy = 0
     diver.o2 = 60
   elseif (btnp(❎) and player.mode == 'diver') then
-    player.mode = 'tgsub'
+    player.mode = 'sub'
   end
 
   if (player.diver_active and player.mode == 'diver') then
@@ -203,14 +203,18 @@ function u_player()
     end
 
     if (player.diver.o2 <= 0) then
-      player.mode = 'tgsub'
+      player.mode = 'sub'
       player.diver_active = false
       player.diver:reset_position()
     end
   end
 
    -- collide with sub claw
-   if (not tgsub.claw.is_open and check_collision(player.diver, tgsub.claw)) then
+   if (
+      not tgsub.claw.is_open and
+      tgsub.claw_len > 0 and
+      check_collision(player.diver, tgsub.claw)
+    ) then
     player.diver.is_hooked = true
     tgsub.claw.cargo = player.diver
   else
