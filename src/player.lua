@@ -35,8 +35,8 @@ function i_player()
   player.diver.walk_frames={4,5,6,5}
   player.diver.reset_position = function(self)
     --self=player.diver
-    self.x = 0
-    self.y = 0
+    self.x = tgsub.x
+    self.y = tgsub.y
     self.dx = 0
     self.dy = 0
     self.o2 = 60

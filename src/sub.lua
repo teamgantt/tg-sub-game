@@ -188,19 +188,7 @@ function u_sub()
 end
 
 function d_sub()
-  if (player.mode == 'sub') then
-    cam.x=tgsub.x-60
-    cam.y=tgsub.y-60
-  else
-    cam.x=player.diver.x-60
-    cam.y=player.diver.y-60
-  end
-  cam.x=mid(map_start, cam.x,map_end)
-  cam.y=mid(map_start, cam.y,1024)
-
-  -- order is important for camera reset
-  camera(cam.x, cam.y)
-  beforedraw()
+  -- beforedraw()
 
   -- draw claw
   if (tgsub.claw_len > 0) then
@@ -218,7 +206,7 @@ function d_sub()
   -- rect(tgsub.x, tgsub.y, tgsub.x+tgsub.w, tgsub.y+tgsub.h, 8)
   -- print("claw len: "..tgsub.claw_len, cam.x+2, cam.y+12, 8)
 
-  afterdraw()
+  -- afterdraw()
   if shake_int > 0 then shake() end
 end
 
@@ -228,64 +216,13 @@ end
 
 -- util functions for lighting fx
 
-function beforedraw()
-  -- local offset = 32
-  -- if (tgsub.flipx) then
-  --   offset = -22
-  -- end
- myx=flr(tgsub.x+6)
- myy=flr(tgsub.y+12)
+-- function beforedraw()
+--   -- local offset = 32
+--   -- if (tgsub.flipx) then
+--   --   offset = -22
+--   -- end
+--  myx=flr(tgsub.x+6)
+--  myy=flr(tgsub.y+12)
 
- myr=36
-end
-
-function afterdraw()
-  if tgsub.y < 100 then
-    return
-  end
- --copy the sccreen to the
- --spritesheet
-  memcpy(0,0x6000,0x2000)
-
-  --remap spritesheet to become
-  --the screen
-  poke2(0x5f55,0)
-
-  fillp(0B1111010111110101.110)
-  -- circfill(myx,myy,myr+4,3)
-  circfill(myx,myy,myr+10,0)
-  fillp()
-  circfill(myx,myy,myr,0)
-  fillp(0XFDF5)
-  circfill(myx,myy,myr+2,0)
-  fillp()
-
-
-  --  --video remapping back to norma
-  poke(0x5f55,0x60)
-
-  --  --set white to transparent
-  palt(7,true)
-
-  --  --shift colors darker
-
-  pal({0,1,1,2,0,5,5,2,5,13,3,1,1,2,13})
-
-  --  --draw the entire spritesheet to the screen
-  sspr(0,0,128,128,cam.x,cam.y)
-
-  --reset everything
-  reload(0,0,0x2000)
-  palt()
-  pal()
-end
-
-
---helper wrapper for sspr that
---allows us to conveniently
---change a line function into
---an sspr function
-function ssprline(x1,y1,x2,y2)
-  sspr(x1,y1,1,y2-y1,x1,y1)
-end
-
+--  myr=36
+-- end

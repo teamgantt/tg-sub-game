@@ -43,21 +43,21 @@ end
 function u_world()
   -- update sharks
   for i=1, #world.sharks do
-    world.sharks[i]:update()
+    if (world.sharks[i] != nil) world.sharks[i]:update()
   end
 
   -- update dynamic objects
   for i=1, #world.chests do
-    world.chests[i]:update()
+    if (world.chests[i] != nil) world.chests[i]:update()
   end
 
   for i=1, #world.clams do
-    world.clams[i]:update()
+    if (world.clams[i] != nil) world.clams[i]:update()
   end
 
   -- update treasures
   for i=1, #world.treasures do
-    world.treasures[i]:update()
+    if (world.treasures[i] != nil) world.treasures[i]:update()
   end
 end
 

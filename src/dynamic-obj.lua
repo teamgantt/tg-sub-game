@@ -26,6 +26,8 @@ function i_dyn_objs()
           local treasure = treasure(self.x, self.y)
           add(world.treasures, treasure)
         end
+      else
+        self.show_hint = false
       end
 
       -- collide with sub claw

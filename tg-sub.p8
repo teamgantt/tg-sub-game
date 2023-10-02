@@ -47,12 +47,91 @@ function _update60()
 end
 
 function _draw()
+  if (player.mode == 'sub') then
+    cam.x=tgsub.x-60
+    cam.y=tgsub.y-60
+  else
+    cam.x=player.diver.x-60
+    cam.y=player.diver.y-60
+  end
+  cam.x=mid(map_start, cam.x,map_end)
+  cam.y=mid(map_start, cam.y,1024)
   d_world()
+  -- order is important for camera reset
+  beforedraw()
+  camera(cam.x, cam.y)
   d_player()
   d_sub()
+  afterdraw()
   d_particles()
   d_ui()
 end
+
+function beforedraw()
+  -- local offset = 32
+  -- if (tgsub.flipx) then
+  --   offset = -22
+  -- end
+ myx=flr(tgsub.x+6)
+ myy=flr(tgsub.y+12)
+
+ myr=36
+end
+
+
+function afterdraw()
+  if tgsub.y < 100 then
+    return
+  end
+ --copy the sccreen to the
+ --spritesheet
+  memcpy(0,0x6000,0x2000)
+
+  --remap spritesheet to become
+  --the screen
+  poke2(0x5f55,0)
+
+  fillp(0B1111010111110101.110)
+  -- circfill(myx,myy,myr+4,3)
+  circfill(myx,myy,myr+10,0)
+  if (player.mode=='diver') circfill(flr(player.diver.x+4), flr(player.diver.y+4), 15,0)
+  fillp()
+  circfill(myx,myy,myr,0)
+  if (player.mode=='diver') circfill(flr(player.diver.x+4), flr(player.diver.y+4), 10,0)
+  fillp(0XFDF5)
+  circfill(myx,myy,myr+2,0)
+  fillp()
+
+
+  --  --video remapping back to norma
+  poke(0x5f55,0x60)
+
+  --  --set white to transparent
+  palt(7,true)
+
+  --  --shift colors darker
+
+  pal({0,0,0,0,0,1,1,2,1,1,1,1,1,1,1})
+
+  --  --draw the entire spritesheet to the screen
+  sspr(0,0,128,128,cam.x,cam.y)
+
+  --reset everything
+  reload(0,0,0x2000)
+  palt()
+  pal()
+end
+
+
+--helper wrapper for sspr that
+--allows us to conveniently
+--change a line function into
+--an sspr function
+function ssprline(x1,y1,x2,y2)
+  sspr(x1,y1,1,y2-y1,x1,y1)
+end
+
+
 __gfx__
 000000000000000000000000000aa000000aa000000aa000000aa00000000000000aa00050505050505050500000000000000000000000000000666666660000
 0000000000000000aaaaaaa00099970000999900009999000099990000999900009997000505050505050500007777000000000000000000066d6d6d6d6d6660
