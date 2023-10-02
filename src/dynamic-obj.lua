@@ -7,17 +7,19 @@ function i_dyn_objs()
       self.h = 8
       self.dy = 0
       self.is_hooked = false
+      self.show_hint = false
       self.img = 59 -- closed chest
-      self.open = false
+      self.is_open = false
     end,
     update = function(self, dt)
-      if self.open then
-        self.img = 60 -- open chest
+      if self.is_open then
+        self.img = 60 -- is_open chest
       end
 
       if (check_collision(self, player.diver)) then
-        if (player.mode == 'diver' and btn(⬇️) and not self.open) then
-          self.open = true
+        self.show_hint = true
+        if (player.mode == 'diver' and btn(⬇️) and not self.is_open) then
+          self.is_open = true
           sfx(5)
 
           -- spawn treasure
@@ -25,8 +27,9 @@ function i_dyn_objs()
           add(world.treasures, treasure)
         end
       end
+
       -- collide with sub claw
-      if (not tgsub.claw.is_open and not tgsub.cargo and check_collision(self, tgsub.claw)) then
+      if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
         self.is_hooked = true
         tgsub.claw.cargo = self
       else
@@ -46,13 +49,15 @@ function i_dyn_objs()
       end
     end,
     draw = function(self)
-      -- print('is_hooked: '..tostr(self.is_hooked), self.x-8, self.y-18, 7)
+      if (self.show_hint and not self.is_open) then
+        print('⬇️ OPEN', self.x-8, self.y-10, 7)
+      end
       spr(self.img, self.x, self.y)
     end,
   }
 
   treasure = class {
-    init = function(self, x, y)
+    init = function(self, x, y, type, img)
       self.x = x
       self.y = y
       self.w = 8
@@ -60,8 +65,9 @@ function i_dyn_objs()
       self.dy = 0
       self.is_carried = false
       self.is_hooked = false
-      self.img = 61 -- treasure
+      self.img = img or 61 -- treasure
       self.show_hint = false
+      self.type = type or 'treasure'
     end,
     update = function(self, dt)
       if (check_collision(self, player.diver)) then
@@ -99,7 +105,7 @@ function i_dyn_objs()
         self.y+=.2
       end
      -- collide with sub claw
-     if (not tgsub.claw.is_open and not tgsub.cargo and check_collision(self, tgsub.claw)) then
+     if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
         self.is_hooked = true
         tgsub.claw.cargo = self
       else
@@ -116,6 +122,14 @@ function i_dyn_objs()
         self.dy = 0
       else
         self.y+=.2
+      end
+
+      -- collect with sub collision
+      if (check_collision(self, tgsub)) then
+        tgsub.claw.cargo = nil
+        player[self.type]+=1
+        sfx(10)
+        del(world.treasures, self)
       end
     end,
     draw = function(self)
@@ -150,6 +164,10 @@ function i_dyn_objs()
         if (btnp(⬇️) and not self.open) then
           self.open = true
           sfx(6)
+
+          -- spawn pearl
+          local pearl = treasure(self.x+4, self.y, 'pearl', 96)
+          add(world.treasures, pearl)
         end
       end
     end,

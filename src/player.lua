@@ -14,6 +14,8 @@ function i_player()
 	}
 
   player = {}
+  player.pearl = 0
+  player.treasure = 0
   player.mode = 'sub' -- sub, diver
   player.diver_active = false
   player.diver = {}
@@ -72,8 +74,14 @@ function u_player()
   if (btnp(❎) and player.mode == 'sub') then
     player.mode = 'diver'
     if (not player.diver_active) then
-      diver.x = tgsub.x+8
-      diver.y = tgsub.y+16
+      -- if tile below is free, spawn diver there
+      if (not collide_map({x=tgsub.x, y=tgsub.y, h=24,w=16}, 'down', 0)) then
+        diver.x = tgsub.x+8
+        diver.y = tgsub.y+16
+      else
+        diver.x = tgsub.x+18
+        diver.y = tgsub.y+8
+      end
     end
     player.diver_active = true
     diver.w = 8

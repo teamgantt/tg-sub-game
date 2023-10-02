@@ -7,8 +7,6 @@ function i_world()
   world.sharks={}
   world.treasures={}
 
-  shark1 = shark(160, 160)
-  shark2 = shark(280, 180)
 
   -- setup dynamic objects
   -- loop over all map tiles and create objects
@@ -22,10 +20,19 @@ function i_world()
         -- remove static tile
         mset(i, j, 0)
       end
+
       if tile == 11 then
         -- create a clam
         local clam = clam(i*8, j*8)
         add(world.clams, clam)
+        -- remove static tile
+        mset(i, j, 0)
+      end
+
+      if tile == 68 then
+        -- create a shark
+        local shark = shark(i*8, j*8)
+        add(world.sharks, shark)
         -- remove static tile
         mset(i, j, 0)
       end
@@ -35,8 +42,9 @@ end
 
 function u_world()
   -- update sharks
-  shark1:update()
-  shark2:update()
+  for i=1, #world.sharks do
+    world.sharks[i]:update()
+  end
 
   -- update dynamic objects
   for i=1, #world.chests do
@@ -67,9 +75,9 @@ function d_world()
   map(0,0,0,0, 128, 256)
 
   -- draw sharks
-  shark1:draw()
-  shark2:draw()
-
+  for i=1, #world.sharks do
+    world.sharks[i]:draw()
+  end
   -- draw dynamic objects
   for i=1, #world.chests do
     world.chests[i]:draw()

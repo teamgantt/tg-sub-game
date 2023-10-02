@@ -30,6 +30,10 @@ function i_sub()
 
     -- reduce hull
     if (tgsub.hull > 0) tgsub.hull-=5
+
+    if (tgsub.hull <= 0) then
+      extcmd('reset')
+    end
   end
 
   prop_bubbles={
@@ -101,13 +105,13 @@ function u_sub()
     -- holding z an pressing down lowers claw
     tgsub.claw.is_open = true
 
-    if (btn(⬇️)) then
+    if (btn(⬇️) and not collide_map(tgsub.claw, 'down', 0)) then
       tgsub.claw_len+=.5
       sfx(8)
     end
   elseif not btn(🅾️) then
     if (tgsub.claw_len > 0) tgsub.claw_len-=.5
-    if (tgsub.claw.is_open) sfx(5)
+    if (tgsub.claw.is_open) sfx(9)
     tgsub.claw.is_open = false
 
     -- -- release z to open claw

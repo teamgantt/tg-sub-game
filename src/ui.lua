@@ -20,8 +20,16 @@ function d_ui()
 
 
   -- current mode
-  print("mode: "..player.mode, cam.x+2, cam.y+2, 9)
+  print("mode: ❎"..player.mode, cam.x+2, cam.y+2, 9)
   print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+8, 7)
+
+  -- pearls
+  print("X"..player.pearl, cam.x+116, cam.y+3, 9)
+  spr(96, cam.x+106, cam.y+2)
+
+  -- treasure
+  print("X"..player.treasure, cam.x+116, cam.y+10, 9)
+  spr(61, cam.x+106, cam.y+9)
 
   -- hull
   print('HULL', cam.x+2, cam.y+120, 10)
