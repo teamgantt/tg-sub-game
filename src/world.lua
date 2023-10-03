@@ -59,6 +59,12 @@ function u_world()
   for i=1, #world.treasures do
     if (world.treasures[i] != nil) world.treasures[i]:update()
   end
+
+  -- maintain sharks
+  if (#world.sharks < 4) then
+    local shark = shark(rnd_between(0, 208)*8, rnd_between(0, 256)*8)
+    add(world.sharks, shark)
+  end
 end
 
 function d_world()

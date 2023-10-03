@@ -31,7 +31,7 @@ function i_player()
   player.diver.dx = 0
   player.diver.dy = 0
   player.diver.speed = 0.4
-  player.diver.o2 = 0
+  player.diver.o2 = 60
   player.diver.walk_frames={4,5,6,5}
   player.diver.reset_position = function(self)
     --self=player.diver
@@ -71,13 +71,13 @@ function u_player()
   diver.dy*=diver_friction
 
   -- activate diver mode
-  if (btnp(❎) and player.mode == 'sub') then
+  if (not tgsub.show_menu and tgsub.mode == 'diver' and player.mode == 'sub') then
     player.mode = 'diver'
     if (not player.diver_active) then
       -- if tile below is free, spawn diver there
       if (not collide_map({x=tgsub.x, y=tgsub.y, h=24,w=16}, 'down', 0)) then
         diver.x = tgsub.x+8
-        diver.y = tgsub.y+16
+        diver.y = tgsub.y+18
       else
         diver.x = tgsub.x+18
         diver.y = tgsub.y+8
@@ -88,9 +88,6 @@ function u_player()
     diver.h = 8
     diver.dx = 0
     diver.dy = 0
-    diver.o2 = 60
-  elseif (btnp(❎) and player.mode == 'diver') then
-    player.mode = 'sub'
   end
 
   if (player.diver_active and player.mode == 'diver') then
@@ -140,7 +137,6 @@ function u_player()
   end
 
   -- apply diver movement
-
   if diver.dy>0 then
     diver.dy=limit_speed(diver.dy,diver.speed)
 
@@ -196,24 +192,25 @@ function u_player()
     tick+=1
   end
 
-  if player.diver.jump_t > 0 and player.diver.jumping then
-    player.diver.jump_t-=1
-    player.diver.dy-=diver_jump_power
+  if diver.jump_t > 0 and diver.jumping then
+    diver.jump_t-=1
+    diver.dy-=diver_jump_power
   else
-    player.diver.dy+=diver_gravity
+    diver.dy+=diver_gravity
   end
 
   -- O2 bar updates
   if (player.diver_active) then
     -- for every second drop o2
     if (tick == 0) then
-      player.diver.o2-=1
+      diver.o2-=1
     end
 
-    if (player.diver.o2 <= 0) then
+    if (diver.o2 <= 0) then
       player.mode = 'sub'
       player.diver_active = false
-      player.diver:reset_position()
+      tgsub.mode = 'claw'
+      diver:reset_position()
     end
   end
 
@@ -221,18 +218,24 @@ function u_player()
    if (
       not tgsub.claw.is_open and
       tgsub.claw_len > 0 and
-      check_collision(player.diver, tgsub.claw)
+      check_collision(diver, tgsub.claw)
     ) then
-    player.diver.is_hooked = true
-    tgsub.claw.cargo = player.diver
+    diver.is_hooked = true
+    tgsub.claw.cargo = diver
   else
-    player.diver.is_hooked = false
+    diver.is_hooked = false
+  end
+
+  -- sync location with sub if not active
+  if (not player.diver_active) then
+    diver.x = tgsub.x
+    diver.y = tgsub.y
   end
 
   -- if treasure is hooked, move with claw
-  if (player.diver.is_hooked) then
-    player.diver.x = tgsub.claw.x-4
-    player.diver.y = tgsub.claw.y
+  if (diver.is_hooked) then
+    diver.x = tgsub.claw.x-4
+    diver.y = tgsub.claw.y
   end
 end
 
@@ -249,12 +252,6 @@ function d_player()
     else
       spr(3, diver.x, diver.y, 1, 1, diver.flipx)
     end
-
-    -- print(diver.o2, diver.x-4, diver.y-8, 12)
-    -- print("dx: "..diver.dx, diver.x+2, diver.y-14, 7)
-    -- print("dy: "..diver.dy, diver.x+2, diver.y-6, 7)
-    -- print('jump_t '..diver.jump_t, diver.x+2, diver.y-12)
-    -- print('jumping: '..tostr(diver.jumping), diver.x+2, diver.y-18)
   end
 end
 

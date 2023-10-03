@@ -1,10 +1,82 @@
 function i_sub()
 	sub_gravity=0.001
   sub_friction=.95
+  torpedo = class {
+    name='torpedo';
+    x=0;
+    y=0;
+    dx=0;
+    dy=0;
+    w=8;
+    h=8;
+    speed=1.5;
+    timer=0;
+    is_active=false;
+    flipx=false;
+    init=function(self, x, y, dx, dy, flipx)
+      self.x = x-2
+      self.y = y
+      self.dx = self.speed
+      self.dy = dy
+      self.is_active = false
+      self.flipx = flipx or false
+    end;
+    update=function(self)
+      if (not self.is_active) then
+        self.timer+=1
+        self.dy=.1
+
+        if (self.timer > 45) then
+          self.is_active = true
+          self.dy=0
+        end
+      end
+
+      -- launch torpedo
+      if (self.is_active) then
+        sfx(11)
+        if (not self.flipx) then
+          self.x+=self.dx
+        else
+          self.x-=self.dx
+        end
+        -- every 4 frames, add bubbles
+        local bub_dir = 'r'
+        if (self.flipx) bub_dir = 'l'
+        if (tick%4 == 0) add_bubble(self.x+2, self.y+4, bub_dir, 20)
+      end
+
+      -- always apply dy
+      self.y+=self.dy
+
+      -- handle collisionss
+      if (collide_map(self, 'right', 0) or collide_map(self, 'left', 0)) then
+        self:destroy()
+        add_explosion(self.x+4, self.y, 40)
+        sfx(12)
+      end
+
+      -- if outside of camera bounds, remove
+      if (self.x < cam.x or self.x > cam.x+128) then
+        self:destroy()
+      end
+    end;
+    draw=function(self)
+      spr(62, self.x, self.y, 1, 1, self.flipx)
+    end;
+    destroy=function(self)
+      del(tgsub.torpedoes, self)
+    end;
+  }
+
   tgsub = {}
+  tgsub.torp_loading = 0
+  tgsub.torpedoes = {}
+  tgsub.show_menu = false
+  tgsub.mode = 'claw' -- claw, torpedo, diver
   tgsub.hull = 100
   tgsub.x = 20
-  tgsub.y = 220
+  tgsub.y = 40
   tgsub.w = 16
   tgsub.h = 13
   tgsub.dx = 0
@@ -21,6 +93,13 @@ function i_sub()
   tgsub.claw.h=8
   tgsub.claw.is_open=true
   tgsub.claw.cargo=nil
+  tgsub.shoot = function(self)
+    if (self.mode == 'torpedo' and self.torp_loading >= 18) then
+      sfx(9)
+      add(self.torpedoes, torpedo(self.x+8, self.y+8, self.dx, self.dy, self.flipx))
+      self.torp_loading = 0
+    end
+  end
   tgsub.crash = function(self)
     shake_int = 6
     sfx(4)
@@ -59,8 +138,24 @@ function u_sub()
   tgsub.dy*=sub_friction
   tgsub.dx*=sub_friction
 
+
+  if (btn(❎)) then
+    tgsub.show_menu = true
+    player.mode = 'sub'
+
+    if (btnp(⬅️)) then
+      tgsub.mode = 'claw'
+    elseif (btnp(➡️)) then
+      tgsub.mode = 'torpedo'
+    elseif (btnp(⬇️)) then
+      tgsub.mode = 'diver'
+    end
+  else
+    tgsub.show_menu = false
+  end
+
   --apply controls
-  if (btn(⬅️) and player.mode == 'sub') then
+  if (not btn(❎) and btn(⬅️) and player.mode == 'sub') then
     -- first slow down
     if tgsub.dx > .1 then tgsub.dx*=sub_friction
     else
@@ -75,7 +170,7 @@ function u_sub()
 	end -- left
 
 
-	if (btn(➡️) and player.mode == 'sub') then
+	if (not btn(❎) and btn(➡️) and player.mode == 'sub') then
     if tgsub.dx < -.1 then tgsub.dx*=sub_friction
     else
       tgsub.dx+=tgsub.speed
@@ -87,21 +182,34 @@ function u_sub()
     tgsub.dy=-sub_gravity
 	end -- right
 
-  -- no left or right
-	if (not btn(🅾️) and btn(⬇️) and player.mode != 'diver' and not collide_map(tgsub, 'down', 0)) then
+
+	if (not btn(🅾️)
+      and not btn(❎)
+      and btn(⬇️)
+      and player.mode != 'diver'
+      and not collide_map(tgsub, 'down', 0)) then
     tgsub.dy+=tgsub.speed
     prop_bubbles.step(.03, 90)
     sfx(2)
 	end
 
-  if not btn(🅾️) and (btn(⬆️) and player.mode != 'diver' and not collide_map(tgsub, 'up', 0)) then
+  if (not btn(🅾️)
+    and not btn(❎)
+    and (btn(⬆️)
+    and player.mode != 'diver'
+    and not collide_map(tgsub, 'up', 0))) then
     tgsub.dy-=tgsub.speed
     prop_bubbles.step(.03, 90)
     sfx(2)
   end
 
+  -- shoot torpedo
+  if (tgsub.mode == 'torpedo' and btn(🅾️) and player.mode == 'sub') then
+    tgsub:shoot()
+  end
+
   --if holding z lower claw
-  if (btn(🅾️) and player.mode == 'sub') then
+  if (tgsub.mode == 'claw' and btn(🅾️) and btn(⬇️) and player.mode == 'sub') then
     -- holding z an pressing down lowers claw
     tgsub.claw.is_open = true
 
@@ -109,6 +217,8 @@ function u_sub()
       tgsub.claw_len+=.5
       sfx(8)
     end
+  elseif btn(🅾️) and player.mode == 'sub' and tgsub.mode == 'claw' then
+    tgsub.claw.is_open = true
   elseif not btn(🅾️) then
     if (tgsub.claw_len > 0) tgsub.claw_len-=.5
     if (tgsub.claw.is_open) sfx(9)
@@ -116,8 +226,6 @@ function u_sub()
 
     -- -- release z to open claw
     tgsub.claw.cargo = nil
-    -- if tgsub.claw.cargo then
-    -- end
   end
 
   -- sync claw position with claw_len
@@ -158,11 +266,10 @@ function u_sub()
   end
 
   -- collide with player to pick up
-  if (check_collision(tgsub, player.diver)) then
+  if (tgsub.mode != 'diver' and check_collision(tgsub, player.diver)) then
     player.mode = 'sub'
     player.diver_active = false
     player.diver.o2 = 60
-    sfx(3)
   end
 
   --apply dx and dy to player position
@@ -185,11 +292,17 @@ function u_sub()
   if tgsub.y<world.water_surface-2 then
     tgsub.y=world.water_surface-2
   end
+
+  --every 1/10 second, update torpedo load time
+  if (tick%6 == 0) tgsub.torp_loading+=1
+
+  -- update torpedoes
+  for torpedo in all(tgsub.torpedoes) do
+    if (torpedo != nil) torpedo:update()
+  end
 end
 
 function d_sub()
-  -- beforedraw()
-
   -- draw claw
   if (tgsub.claw_len > 0) then
     local claw_x = tgsub.x+8
@@ -200,29 +313,28 @@ function d_sub()
     spr(img, claw_x-4, claw_y+tgsub.claw_len, 1, 1)
   end
 
+
+  -- draw torpedo loading indicator
+  if (tgsub.mode == 'torpedo') then
+    local bar_len = tgsub.torp_loading
+    if (bar_len < 16) line(tgsub.x, tgsub.y-4, tgsub.x+bar_len, tgsub.y-4, 6)
+  end
+
   spr(1, tgsub.x, tgsub.y, 2, 2, tgsub.flipx)
 
   -- draw tgsub hitbox
   -- rect(tgsub.x, tgsub.y, tgsub.x+tgsub.w, tgsub.y+tgsub.h, 8)
   -- print("claw len: "..tgsub.claw_len, cam.x+2, cam.y+12, 8)
+  -- print('torpedoes:'..#tgsub.torpedoes, cam.x+2, cam.y+12, 8)
 
-  -- afterdraw()
   if shake_int > 0 then shake() end
+
+  -- draw torpedoes
+  for torpedo in all(tgsub.torpedoes) do
+    if (torpedo != nil) torpedo:draw()
+  end
 end
 
 function limit_speed(num,maximum)
   return mid(-maximum,num,maximum)
 end
-
--- util functions for lighting fx
-
--- function beforedraw()
---   -- local offset = 32
---   -- if (tgsub.flipx) then
---   --   offset = -22
---   -- end
---  myx=flr(tgsub.x+6)
---  myy=flr(tgsub.y+12)
-
---  myr=36
--- end
