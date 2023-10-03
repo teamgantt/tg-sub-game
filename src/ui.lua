@@ -9,6 +9,7 @@ end
 function d_ui()
   local x_off=18 --bar offsets
   local y_off=2
+  local mode = tgsub.mode
   -- sub hull
   local hull_color = 11 -- good
 
@@ -27,11 +28,11 @@ function d_ui()
     local claw_color = 9
     local torpedo_color = 9
     local diver_color = 9
-    if (tgsub.mode == 'claw') then
+    if (mode == 'claw') then
       claw_color = 11
-    elseif (tgsub.mode == 'torpedo') then
+    elseif (mode == 'torpedo') then
       torpedo_color = 11
-    elseif (tgsub.mode == 'diver') then
+    elseif (mode == 'diver') then
       diver_color = 11
     end
     print('TORPEDO', tgsub.x+18, tgsub.y+4, torpedo_color)
@@ -42,9 +43,9 @@ function d_ui()
   -- current mode
   print("mode: ❎"..player.mode, cam.x+2, cam.y+2, 9)
 
-  if (tgsub.mode == 'claw') print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+8, 7)
-  if (tgsub.mode == 'torpedo') print("TORPEDO: 🅾️", cam.x+3, cam.y+8, 7)
-  if (tgsub.mode == 'diver') print("DIVER: 🅾️", cam.x+3, cam.y+8, 7)
+  if (mode == 'claw') print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+8, 7)
+  if (mode == 'torpedo') print("TORPEDO: 🅾️", cam.x+3, cam.y+8, 7)
+  if (mode == 'diver') print("DIVER: 🅾️", cam.x+3, cam.y+8, 7)
 
   -- pearls
   print("X"..player.pearl, cam.x+116, cam.y+3, 9)

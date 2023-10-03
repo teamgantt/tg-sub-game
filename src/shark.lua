@@ -44,7 +44,6 @@ function i_shark()
       end
 
 
-
       -- live sharks patrol back and forth
       if (self.state != 'dead') then
         -- watch for tgsub and give chase
@@ -126,9 +125,9 @@ function i_shark()
       -- print('patrol_t: '..self.patrol_t, self.x-2, self.y-2, 11)
 
       -- draw shark animated sprite
-      if (self.state == 'attacking') then
+      if (self.state == 'chase' or self.state == 'attacking') then
         spr(self.attack_frames[flr(self.fr)], self.x, self.y, 2, 1, self.flip_x)
-      elseif (self.state == 'chase' or self.state == 'patrol') then
+      elseif ( self.state == 'patrol') then
         spr(self.swim_frames[flr(self.fr)], self.x, self.y, 2, 1, self.flip_x)
       elseif (self.state == 'dead') then
         spr(70, self.x, self.y, 2, 1, self.flip_x, true)
