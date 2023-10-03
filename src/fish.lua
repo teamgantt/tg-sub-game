@@ -29,12 +29,6 @@ function i_fish()
     animate=tick_frames;
 
     update=function(self)
-      local dist_to_sub = dst(self, tgsub)
-      local col_sub_left = check_collision(self, tgsub)
-      local col_sub_right = check_collision(self, tgsub)
-      local col_sub_top = check_collision(self, tgsub)
-      local col_sub_bottom = check_collision(self, tgsub)
-
       local col_world_left = collide_map(self, 'left', 0)
       local col_world_right = collide_map(self, 'right', 0)
       local col_world_top = collide_map(self, 'top', 0)
@@ -56,9 +50,9 @@ function i_fish()
         -- watch for tgsub and give chase
         if (self.state == 'patrol') then
           if (self.patrol_t < self.patrol_time) then
-            if (self.flip_x) then
+            if (not col_world_left and self.flip_x) then
               self.x+=self.speed
-            elseif (not self.flip_x) then
+            elseif (col_world_left or not self.flip_x) then
               self.x-=self.speed
             end
           elseif (self.patrol_t >= self.patrol_time) then
@@ -67,9 +61,9 @@ function i_fish()
           end
 
           -- randomize up and down movement using patrol time
-          if (self.patrol_t < self.patrol_time/2) then
+          if (not col_world_top and self.patrol_t < self.patrol_time/2) then
             self.y-=.1
-          elseif (self.patrol_t >= self.patrol_time/2) then
+          elseif (not col_world_bottom and self.patrol_t >= self.patrol_time/2) then
             self.y+=.1
           end
 
