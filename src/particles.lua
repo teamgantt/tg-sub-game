@@ -21,6 +21,12 @@ function i_particles()
     add(bubbles,fx)
   end
 
+  add_explosion = function (x,y,life)
+    for i=1,6 do
+      add_bubble(x,y, nil, life) -- no dir
+    end
+  end
+
   add_sparks = function (x,y,dir, life)
     local fx={
       x=x,
