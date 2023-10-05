@@ -143,10 +143,7 @@ function u_sub()
 
   -- toggle between sub and diver on pressing x
   if (btnp(❎) and player.diver_active) then
-    if (player.mode == 'sub') then
-      player.mode = 'diver'
-      tgsub.mode = 'diver'
-    else
+    if (player.mode == 'diver') then
       player.mode = 'sub'
       tgsub.mode = 'sub'
     end
