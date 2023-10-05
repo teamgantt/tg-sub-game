@@ -57,7 +57,7 @@ function i_sub()
       end
 
       -- if outside of camera bounds, remove
-      if (self.x < cam.x or self.x > cam.x+128) then
+      if (self.x < cam_x or self.x > cam_x+128) then
         self:destroy()
       end
     end;
@@ -327,8 +327,8 @@ function d_sub()
 
   -- draw tgsub hitbox
   -- rect(tgsub.x, tgsub.y, tgsub.x+tgsub.w, tgsub.y+tgsub.h, 8)
-  -- print("claw len: "..tgsub.claw_len, cam.x+2, cam.y+12, 8)
-  -- print('torpedoes:'..#tgsub.torpedoes, cam.x+2, cam.y+12, 8)
+  -- print("claw len: "..tgsub.claw_len, cam_x+2, cam_y+12, 8)
+  -- print('torpedoes:'..#tgsub.torpedoes, cam_x+2, cam_y+12, 8)
 
   if shake_int > 0 then shake() end
 

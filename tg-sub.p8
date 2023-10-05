@@ -49,20 +49,20 @@ end
 
 function _draw()
   if (player.mode == 'sub' and tgsub.mode == 'torpedo') then
-    cam.x=tgsub.x-60
-    cam.y=tgsub.y-60
+    cam_x=tgsub.x-60
+    cam_y=tgsub.y-60
   elseif (player.mode == 'sub' and tgsub.mode == 'claw') then
-    cam.x=tgsub.x-60
-    cam.y=tgsub.claw.y-68
+    cam_x=tgsub.x-60
+    cam_y=tgsub.claw.y-68
   else
-    cam.x=player.diver.x-60
-    cam.y=player.diver.y-60
+    cam_x=player.diver.x-60
+    cam_y=player.diver.y-60
   end
-  cam.x=mid(map_start, cam.x,map_end)
-  cam.y=mid(map_start, cam.y,1024)
+  cam_x=mid(map_start, cam_x,map_end)
+  cam_y=mid(map_start, cam_y,1024)
   d_world()
   -- order is important for camera reset
-  camera(cam.x, cam.y)
+  camera(cam_x, cam_y)
   beforedraw()
   d_player()
   d_sub()
@@ -118,7 +118,7 @@ function afterdraw()
   end
 
   --  --draw the entire spritesheet to the screen
-  sspr(0,0,128,128,cam.x,cam.y)
+  sspr(0,0,128,128,cam_x,cam_y)
 
   --reset everything
   reload(0,0,0x2000)
