@@ -1,18 +1,22 @@
 
 function i_world()
-  world={}
-  world.water_surface=28
-  world.chests={}
-  world.clams={}
-  world.shark={}
-  world.fish={}
-  world.treasures={}
+  wave_timing = 0.075
+  wave_frames={99,100,101,102}
+  world={
+    water_surface=31,
+    chests={},
+    clams={},
+    shark={},
+    fish={},
+    treasures={},
+    waves={}
+  }
 
 
   -- setup dynamic objects
   -- loop over all map tiles and create objects
-  for i=1, 208 do
-    for j=1, 256 do
+  for i=1, 128 do
+    for j=1, 128 do
       local tile = mget(i, j)
       if tile == 59 then
         -- create a chest
@@ -41,7 +45,27 @@ function i_world()
       if tile == 80 then
         -- create a treasure
         local f = fish(i*8, j*8)
-        add(world.fish, f)
+        add(world.fish,  f)
+        -- remove static tile
+        mset(i, j, 0)
+      end
+
+      if tile==99 then
+        -- add wave
+        add(world.waves, {
+          x=i*8,
+          y=j*8,
+          fr=1,
+          update=function(self)
+            self.fr += wave_timing
+            if (self.fr > #wave_frames) then
+              self.fr = 1
+            end
+          end;
+          draw=function(self)
+            spr(wave_frames[flr(self.fr)], self.x, self.y)
+          end
+        })
         -- remove static tile
         mset(i, j, 0)
       end
@@ -50,29 +74,19 @@ function i_world()
 end
 
 function u_world()
+  -- update waves
+  foreach(world.waves, guarded_update)
+
   -- update sharks
-  for i=1, #world.shark do
-    if (world.shark[i] != nil) world.shark[i]:update()
-  end
-
+  foreach(world.shark, guarded_update)
   -- update dynamic objects
-  for i=1, #world.chests do
-    if (world.chests[i] != nil) world.chests[i]:update()
-  end
-
-  for i=1, #world.clams do
-    if (world.clams[i] != nil) world.clams[i]:update()
-  end
-
+  foreach(world.chests, guarded_update)
+  foreach(world.clams, guarded_update)
   -- update treasures
-  for i=1, #world.treasures do
-    if (world.treasures[i] != nil) world.treasures[i]:update()
-  end
+  foreach(world.treasures, guarded_update)
+  -- update fish
+  foreach(world.fish, guarded_update)
 
-  -- updating fish
-  for i=1, #world.fish do
-    if (world.fish[i] != nil) world.fish[i]:update()
-  end
 
   -- maintain sharks
   if (#world.shark < 4) then
@@ -81,7 +95,7 @@ function u_world()
   end
 
   -- maintain fish
-  if (#world.fish < 4) then
+  if (#world.fish < 5) then
     local f = fish(rnd_between(0, 208)*8, rnd_between(0, 256)*8)
     add(world.fish, f)
   end
@@ -100,30 +114,31 @@ function d_world()
 
   map(0,0,0,0, 128, 256)
 
-  -- draw sharks
-  for i=1, #world.shark do
-    world.shark[i]:draw()
-  end
+  foreach(world.waves, draw_obj)
+
+  -- draw sharks'
+  foreach(world.shark, draw_obj)
+
   -- draw dynamic objects
-  for i=1, #world.chests do
-    world.chests[i]:draw()
-  end
-  for i=1, #world.clams do
-    world.clams[i]:draw()
-  end
+  foreach(world.chests, draw_obj)
+  foreach(world.clams, draw_obj)
 
   -- draw treasures
-  for i=1, #world.treasures do
-    world.treasures[i]:draw()
-  end
+  foreach(world.treasures, draw_obj)
 
   -- draw fish
-  for i=1, #world.fish do
-    world.fish[i]:draw()
-  end
+  foreach(world.fish, draw_obj)
 end
 
 
 function rnd_between(min, max)
 	return flr(rnd(max-min+1))+min
+end
+
+function guarded_update(thing)
+  if (thing != nil) thing:update()
+end
+
+function draw_obj(obj)
+  if (obj != nil) obj:draw()
 end
