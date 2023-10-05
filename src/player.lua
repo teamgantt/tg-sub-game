@@ -13,54 +13,55 @@ function i_player()
 		timing=.1
 	}
 
-  player = {}
-  player.pearl = 0
-  player.treasure = 0
-  player.mode = 'sub' -- sub, diver
-  player.diver_active = false
-  player.diver = {}
-  player.diver.jump_t = 0
-  player.diver.holding_jump=false
-  player.diver.jumping=false
-  player.diver.walking=true
-  player.diver.flipx = false
-  player.diver.x = 0
-  player.diver.y = 0
-  player.diver.w = 0
-  player.diver.h = 0
-  player.diver.dx = 0
-  player.diver.dy = 0
-  player.diver.speed = 0.4
-  player.diver.o2 = 60
-  player.diver.walk_frames={4,5,6,5}
-  player.diver.reset_position = function(self)
-    --self=player.diver
-    self.x = tgsub.x
-    self.y = tgsub.y
-    self.dx = 0
-    self.dy = 0
-    self.o2 = 60
-  end
+  player = {
+    pearl = 0,
+    coin = 0,
+    mode = 'sub',-- sub, diver
+    diver_active = false,
+    diver = {
+      jump_t = 0,
+      holding_jump=false,
+      jumping=false,
+      walking=true,
+      flipx = false,
+      x = 0,
+      y = 0,
+      w = 0,
+      h = 0,
+      dx = 0,
+      dy = 0,
+      speed = 0.4,
+      o2 = 60,
+      walk_frames={4,5,6,5},
+      reset_position = function(self)
+        --self=player.diver
+        self.x = tgsub.x
+        self.y = tgsub.y
+        self.dx = 0
+        self.dy = 0
+        self.o2 = 60
+      end,
 
-  player.diver.jump = function(self)
-    self.jump_t = 30
-    self.jumping = true
-    diver_bubbles.step(.05)
-    diver_bubbles.step(.02, 60)
-    self.on_ground = false
-  end
-
+      jump = function(self)
+        self.jump_t = 30
+        self.jumping = true
+        diver_bubbles.step(.05)
+        diver_bubbles.step(.02, 60)
+        self.on_ground = false
+      end
+    }
+  }
   diver_bubbles={
-		elapsed=0,
-		step=function(timing)
-			diver_bubbles.elapsed+=timing
-			if (player.diver_active and diver_bubbles.elapsed >= 1) then
-				diver_bubbles.elapsed=0
+    elapsed=0,
+    step=function(timing)
+      diver_bubbles.elapsed+=timing
+      if (player.diver_active and diver_bubbles.elapsed >= 1) then
+        diver_bubbles.elapsed=0
         sfx(3)
         add_bubble(player.diver.x+4, player.diver.y +2,'l', rnd_between(20,60))
-			end
-		end
-	}
+      end
+    end
+  }
 end
 
 function u_player()

@@ -57,7 +57,7 @@ function i_sub()
       end
 
       -- if outside of camera bounds, remove
-      if (self.x < cam.x or self.x > cam.x+128) then
+      if (self.x < cam_x or self.x > cam_x+128) then
         self:destroy()
       end
     end;
@@ -69,51 +69,54 @@ function i_sub()
     end;
   }
 
-  tgsub = {}
-  tgsub.torp_loading = 0
-  tgsub.torpedoes = {}
-  tgsub.show_menu = false
-  tgsub.mode = 'claw' -- claw, torpedo, diver
-  tgsub.hull = 100
-  tgsub.x = 20
-  tgsub.y = 40
-  tgsub.w = 16
-  tgsub.h = 13
-  tgsub.dx = 0
-  tgsub.dy = 0
-  tgsub.max_dx = 0.7
-  tgsub.max_dy = 0.5
-  tgsub.speed = 0.5
-  tgsub.flipx = false
-  tgsub.claw_len = 0
-  tgsub.claw={}
-  tgsub.claw.x=0
-  tgsub.claw.y=0
-  tgsub.claw.w=8
-  tgsub.claw.h=8
-  tgsub.claw.is_open=true
-  tgsub.claw.cargo=nil
-  tgsub.shoot = function(self)
-    if (self.mode == 'torpedo' and self.torp_loading >= 18) then
-      sfx(9)
-      add(self.torpedoes, torpedo(self.x+8, self.y+8, self.dx, self.dy, self.flipx))
-      self.torp_loading = 0
-    end
-  end
-  tgsub.crash = function(self)
-    shake_int = 6
-    sfx(4)
-    add_sparks(tgsub.x+4, tgsub.y+8, 40)
-    add_sparks(tgsub.x+12, tgsub.y+12, 40)
-    add_sparks(tgsub.x+12, tgsub.y+12, 40)
+  tgsub = {
+    torp_loading = 0,
+    torpedoes = {},
+    show_menu = false,
+    mode = 'claw', -- claw, torpedo, diver
+    hull = 100,
+    x = 20,
+    y = 40,
+    w = 16,
+    h = 13,
+    dx = 0,
+    dy = 0,
+    max_dx = 0.7,
+    max_dy = 0.5,
+    speed = 0.5,
+    flipx = false,
+    claw_len = 0,
+    claw={
+      x=0,
+      y=0,
+      w=8,
+      h=8,
+      is_open=true,
+      cargo=nil,
+    },
+    shoot = function(self)
+      if (self.mode == 'torpedo' and self.torp_loading >= 18) then
+        sfx(9)
+        add(self.torpedoes, torpedo(self.x+8, self.y+8, self.dx, self.dy, self.flipx))
+        self.torp_loading = 0
+      end
+    end,
+    crash = function(self)
+      shake_int = 6
+      sfx(4)
+      add_sparks(self.x+4, self.y+8, 40)
+      add_sparks(self.x+12, self.y+12, 40)
+      add_sparks(self.x+12, self.y+12, 40)
 
-    -- reduce hull
-    if (tgsub.hull > 0) tgsub.hull-=5
+      -- reduce hull
+      if (self.hull > 0) self.hull-=5
 
-    if (tgsub.hull <= 0) then
-      extcmd('reset')
+      if (self.hull <= 0) then
+        extcmd('reset')
+      end
     end
-  end
+  }
+
 
   prop_bubbles={
 		elapsed=0,
@@ -324,8 +327,8 @@ function d_sub()
 
   -- draw tgsub hitbox
   -- rect(tgsub.x, tgsub.y, tgsub.x+tgsub.w, tgsub.y+tgsub.h, 8)
-  -- print("claw len: "..tgsub.claw_len, cam.x+2, cam.y+12, 8)
-  -- print('torpedoes:'..#tgsub.torpedoes, cam.x+2, cam.y+12, 8)
+  -- print("claw len: "..tgsub.claw_len, cam_x+2, cam_y+12, 8)
+  -- print('torpedoes:'..#tgsub.torpedoes, cam_x+2, cam_y+12, 8)
 
   if shake_int > 0 then shake() end
 

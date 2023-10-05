@@ -41,29 +41,29 @@ function d_ui()
   end
 
   -- current mode
-  print("mode: ❎"..player.mode, cam.x+2, cam.y+2, 9)
+  print("mode: ❎"..player.mode, cam_x+2, cam_y+2, 9)
 
-  if (mode == 'claw') print("CLAW: 🅾️+⬇️", cam.x+2, cam.y+8, 7)
-  if (mode == 'torpedo') print("TORPEDO: 🅾️", cam.x+3, cam.y+8, 7)
-  if (mode == 'diver') print("DIVER: 🅾️", cam.x+3, cam.y+8, 7)
+  if (mode == 'claw') print("CLAW: 🅾️+⬇️", cam_x+2, cam_y+8, 7)
+  if (mode == 'torpedo') print("TORPEDO: 🅾️", cam_x+3, cam_y+8, 7)
+  if (mode == 'diver') print("DIVER: 🅾️", cam_x+3, cam_y+8, 7)
 
   -- pearls
-  print("X"..player.pearl, cam.x+116, cam.y+3, 9)
-  spr(96, cam.x+106, cam.y+2)
+  print("X"..player.pearl, cam_x+116, cam_y+3, 9)
+  spr(96, cam_x+106, cam_y+2)
 
   -- treasure
-  print("X"..player.treasure, cam.x+116, cam.y+10, 9)
-  spr(61, cam.x+106, cam.y+9)
+  print("X"..player.coin, cam_x+116, cam_y+10, 9)
+  spr(61, cam_x+106, cam_y+9)
 
   -- hull
-  print('HULL', cam.x+2, cam.y+120, 10)
-  line(cam.x+2+x_off, cam.y+121+y_off, cam.x+tgsub.hull+x_off, cam.y+121+y_off, hull_color)
-  rect(cam.x+2+x_off, cam.y+120+y_off, cam.x+100+x_off, cam.y+122+y_off, 7)
+  print('HULL', cam_x+2, cam_y+120, 10)
+  line(cam_x+2+x_off, cam_y+121+y_off, cam_x+tgsub.hull+x_off, cam_y+121+y_off, hull_color)
+  rect(cam_x+2+x_off, cam_y+120+y_off, cam_x+100+x_off, cam_y+122+y_off, 7)
 
   if (player.diver_active) then
     -- diver o2
-    print('AIR', cam.x+2, cam.y+115, 12)
-    line(cam.x+3+x_off, cam.y+116+y_off, cam.x+player.diver.o2+x_off, cam.y+116+y_off, 12)
-    rect(cam.x+2+x_off, cam.y+115+y_off, cam.x+60+x_off, cam.y+117+y_off, 7)
+    print('AIR', cam_x+2, cam_y+115, 12)
+    line(cam_x+3+x_off, cam_y+116+y_off, cam_x+player.diver.o2+x_off, cam_y+116+y_off, 12)
+    rect(cam_x+2+x_off, cam_y+115+y_off, cam_x+60+x_off, cam_y+117+y_off, 7)
   end
 end

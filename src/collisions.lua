@@ -52,14 +52,7 @@ end
 -- x1,y1 are the top-left coords of the first box, while w1,h1 are its width and height;
 -- x2,y2,w2 & h2 are the same, but for the second box.
 function check_collision(o, p)
-  local x1 = o.x
-  local y1 = o.y
-  local w1 = o.w
-  local h1 = o.h
-  local x2 = p.x
-  local y2 = p.y
-  local w2 = p.w
-  local h2 = p.h
+  local x1, y1, w1, h1, x2, y2, w2, h2 = o.x, o.y, o.w, o.h, p.x, p.y, p.w, p.h
 
   return x1 < x2+w2 and
          x2 < x1+w1 and
