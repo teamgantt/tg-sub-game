@@ -4,7 +4,7 @@ function i_world()
   world.water_surface=28
   world.chests={}
   world.clams={}
-  world.sharks={}
+  world.shark={}
   world.fish={}
   world.treasures={}
 
@@ -33,14 +33,14 @@ function i_world()
       if tile == 68 then
         -- create a shark
         local shark = shark(i*8, j*8)
-        add(world.sharks, shark)
+        add(world.shark, shark)
         -- remove static tile
         mset(i, j, 0)
       end
 
       if tile == 80 then
         -- create a treasure
-        local f = fish(i*8, j*8, flr(rnd(3))+1)
+        local f = fish(i*8, j*8)
         add(world.fish, f)
         -- remove static tile
         mset(i, j, 0)
@@ -51,8 +51,8 @@ end
 
 function u_world()
   -- update sharks
-  for i=1, #world.sharks do
-    if (world.sharks[i] != nil) world.sharks[i]:update()
+  for i=1, #world.shark do
+    if (world.shark[i] != nil) world.shark[i]:update()
   end
 
   -- update dynamic objects
@@ -75,9 +75,9 @@ function u_world()
   end
 
   -- maintain sharks
-  if (#world.sharks < 4) then
+  if (#world.shark < 4) then
     local shark = shark(rnd_between(0, 208)*8, rnd_between(0, 256)*8)
-    add(world.sharks, shark)
+    add(world.shark, shark)
   end
 
   -- maintain fish
@@ -101,8 +101,8 @@ function d_world()
   map(0,0,0,0, 128, 256)
 
   -- draw sharks
-  for i=1, #world.sharks do
-    world.sharks[i]:draw()
+  for i=1, #world.shark do
+    world.shark[i]:draw()
   end
   -- draw dynamic objects
   for i=1, #world.chests do
