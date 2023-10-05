@@ -15,7 +15,7 @@ function i_player()
 
   player = {}
   player.pearl = 0
-  player.treasure = 0
+  player.coin = 0
   player.mode = 'sub' -- sub, diver
   player.diver_active = false
   player.diver = {}

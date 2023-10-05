@@ -52,7 +52,7 @@ function d_ui()
   spr(96, cam.x+106, cam.y+2)
 
   -- treasure
-  print("X"..player.treasure, cam.x+116, cam.y+10, 9)
+  print("X"..player.coin, cam.x+116, cam.y+10, 9)
   spr(61, cam.x+106, cam.y+9)
 
   -- hull

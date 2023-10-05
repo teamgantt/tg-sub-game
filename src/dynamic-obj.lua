@@ -1,14 +1,27 @@
 function i_dyn_objs()
-  chest = class {
-    init = function(self, x, y)
+  dyn_obj = class {
+    init = function(self, type, x, y, w, h, spr_num)
+      self.type = type
       self.x = x
       self.y = y
-      self.w = 8
-      self.h = 8
+      self.w = w or 8
+      self.h = w or 8
+      self.is_hooked = false
+      self.img = spr_num
       self.dy = 0
+      self.dx = 0
+    end;
+
+    draw = function(self)
+      spr(self.img, self.x, self.y, self.w/8, self.h/8, false, false)
+    end;
+  }
+
+  chest = dyn_obj:extend {
+    init = function(self, x, y)
+      dyn_obj.init(self, 'chest', x, y, 8, 8, 59)
       self.is_hooked = false
       self.show_hint = false
-      self.img = 59 -- closed chest
       self.is_open = false
     end,
     update = function(self, dt)
@@ -23,7 +36,7 @@ function i_dyn_objs()
           sfx(5)
 
           -- spawn treasure
-          local treasure = treasure(self.x, self.y)
+          local treasure = treasure('coin', self.x, self.y)
           add(world.treasures, treasure)
         end
       else
@@ -58,18 +71,14 @@ function i_dyn_objs()
     end,
   }
 
-  treasure = class {
-    init = function(self, x, y, type, img)
-      self.x = x
-      self.y = y
-      self.w = 8
-      self.h = 8
-      self.dy = 0
+  treasure = dyn_obj:extend {
+    init = function(self, type, x, y)
+      local spr_num = 61
+      if (type == 'pearl') spr_num = 96
+      dyn_obj.init(self, type, x, y, 8, 8, spr_num)
       self.is_carried = false
       self.is_hooked = false
-      self.img = img or 61 -- treasure
       self.show_hint = false
-      self.type = type or 'treasure'
     end,
     update = function(self, dt)
       if (check_collision(self, player.diver)) then
@@ -147,37 +156,24 @@ function i_dyn_objs()
     end,
   }
 
-  clam = class {
+  clam = dyn_obj:extend {
     init = function(self, x, y)
-      self.x = x-8
-      self.y = y-8
-      self.w = 16
-      self.h = 16
-      self.img = 12 -- closed clam
-      self.open = false
+      dyn_obj.init(self, 'clam', x-8, y-8, 16, 16, 12)
+      self.is_open = false
     end,
     update = function(self, dt)
-      if self.open then
-        self.img = 14 -- open clam
-      end
-
+      if (self.is_open) self.img = 14
 
       if (check_collision(self, player.diver)) then
-        if (btnp(⬇️) and not self.open) then
-          self.open = true
+        if (btnp(⬇️) and not self.is_open) then
+          self.is_open = true
           sfx(6)
 
           -- spawn pearl
-          local pearl = treasure(self.x+4, self.y, 'pearl', 96)
+          local pearl = treasure('pearl', self.x+4, self.y)
           add(world.treasures, pearl)
         end
       end
     end,
-    draw = function(self)
-      spr(self.img, self.x, self.y, 2, 2, false, false)
-    end,
-    collision = function(self, other)
-      if (check_collision(self, other)) return true
-    end
   }
 end
