@@ -243,13 +243,13 @@ function u_sub()
     if collide_map(tgsub,"down",0) then
       tgsub.y-=((tgsub.y+tgsub.h+1)%8)-1
       tgsub.dy=-tgsub.dy
-      tgsub.crash()
+      tgsub:crash()
     end
   elseif tgsub.dy<0 then
     tgsub.dy=limit_speed(tgsub.dy,tgsub.max_dy)
     if collide_map(tgsub,"up",0) then
       tgsub.dy=-tgsub.dy
-      tgsub.crash()
+      tgsub:crash()
     end
   end
 
@@ -258,13 +258,13 @@ function u_sub()
     tgsub.dx=limit_speed(tgsub.dx,tgsub.max_dx)
     if collide_map(tgsub,"left",0) then
       tgsub.dx=-tgsub.dx
-      tgsub.crash()
+      tgsub:crash()
     end
   elseif tgsub.dx>0 then
     tgsub.dx=limit_speed(tgsub.dx,tgsub.max_dx)
     if collide_map(tgsub,"right",0) then
       tgsub.dx=-tgsub.dx
-      tgsub.crash()
+      tgsub:crash()
     end
   end
 
