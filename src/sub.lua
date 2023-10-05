@@ -141,16 +141,25 @@ function u_sub()
   tgsub.dy*=sub_friction
   tgsub.dx*=sub_friction
 
-
-  if (btn(❎)) then
+  -- toggle between sub and diver on pressing x
+  if (btnp(❎) and player.diver_active) then
+    if (player.mode == 'sub') then
+      player.mode = 'diver'
+      tgsub.mode = 'diver'
+    else
+      player.mode = 'sub'
+      tgsub.mode = 'sub'
+    end
+  -- sub menu
+  elseif (btn(❎)) then
     tgsub.show_menu = true
     player.mode = 'sub'
-
+    
     if (btnp(⬅️)) then
       tgsub.mode = 'claw'
     elseif (btnp(➡️)) then
       tgsub.mode = 'torpedo'
-    elseif (btnp(⬇️)) then
+    elseif (btn(⬇️)) then
       tgsub.mode = 'diver'
     end
   else
