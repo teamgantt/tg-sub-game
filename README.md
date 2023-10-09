@@ -2,11 +2,11 @@
 
 A tiny 8-bit ocean adventure by TeamGantt
 
-![cart image](tg-sub.p8.png)
+![cart image](sdd.p8.png)
 
 ### Overview
 
-Help Pilot Nathan and Diver John collect the treasured milestones and pearls of wisdom without getting eaten by sharks.
+Help Pilot Nathan and Diver John collect the trophies of the deep without imploding or getting eaten by sharks.
 
 **Features**
 
