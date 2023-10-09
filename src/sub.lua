@@ -82,7 +82,7 @@ function i_sub()
     dx = 0,
     dy = 0,
     max_dx = 0.7,
-    max_dy = 0.5,
+    max_dy = 0.65,
     speed = 0.5,
     flipx = false,
     claw_len = 0,
@@ -151,7 +151,7 @@ function u_sub()
   elseif (btn(❎)) then
     tgsub.show_menu = true
     player.mode = 'sub'
-    
+
     if (btnp(⬅️)) then
       tgsub.mode = 'claw'
     elseif (btnp(➡️)) then
@@ -228,7 +228,9 @@ function u_sub()
     end
   elseif btn(🅾️) and player.mode == 'sub' and tgsub.mode == 'claw' then
     tgsub.claw.is_open = true
+    sub_friction = .7
   elseif not btn(🅾️) then
+    sub_friction = .95
     if (tgsub.claw_len > 0) tgsub.claw_len-=.5
     if (tgsub.claw.is_open) sfx(9)
     tgsub.claw.is_open = false

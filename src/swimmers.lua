@@ -1,6 +1,7 @@
 function i_shark()
   shark_timing=.05
   patrol_time=120
+  max_dead_time=720
   fish_frames={
     {80,81}, -- tuna
     {82,83}, -- clown
@@ -10,6 +11,7 @@ function i_shark()
   swimmer = class {
     state='patrol'; -- patrol, chase, attacking, dead
     type='shark'; -- shark, fish, crab
+    dead_t=0;
     x=20;
     y=20;
     w=16;
@@ -31,6 +33,7 @@ function i_shark()
     end;
 
     collide_w_bullet=function(self)
+
       for i, b in pairs(tgsub.torpedoes) do
         if (check_collision(self, b)) then
           self:kill()
@@ -143,10 +146,16 @@ function i_shark()
         end
       end
 
+      if self.state == 'dead' then
+        if self.dead_t < max_dead_time then
+          self.dead_t+=1
+        else
+          self:destroy()
+        end
+      end
+
       if (self.state == 'dead' and self.y >= world.water_surface) then
         self.y-=.2
-      elseif (self.state == 'dead' and self.y < world.water_surface+1) then
-        self:destroy()
       elseif (self.state != 'dead') then
         self:animate(3)
       end
@@ -170,6 +179,7 @@ function i_shark()
       end
     end;
   }
+
   fish = swimmer:extend {
     fish_type=1; -- 1=tuna, 2=clown, 3=sea horse
 
@@ -218,10 +228,16 @@ function i_shark()
         end
       end
 
+      if self.state == 'dead' then
+        if self.dead_t < max_dead_time then
+          self.dead_t+=1
+        else
+          self:destroy()
+        end
+      end
+
       if (self.state == 'dead' and self.y >= world.water_surface) then
         self.y-=.2
-      elseif (self.state == 'dead' and self.y < world.water_surface+1) then
-        self:destroy()
       elseif (self.state != 'dead') then
         self:animate(3)
       end
