@@ -113,7 +113,7 @@ function i_shark()
             if (col_sub_right) then
               self.state = 'attacking'
               self.x-=self.speed+5
-              tgsub:crash()
+              tgsub:crash(3)
             elseif (not col_world_right) then
               self.x+=self.speed
             end
@@ -122,7 +122,7 @@ function i_shark()
             if (col_sub_left) then
               self.state = 'attacking'
               self.x+=self.speed+5
-              tgsub:crash()
+              tgsub:crash(3)
             elseif (not col_world_left) then
               self.x-=self.speed
             end
@@ -133,14 +133,14 @@ function i_shark()
               self.y+=self.speed
             elseif (col_sub_bottom) then
               self.y-=self.speed+5
-              tgsub:crash()
+              tgsub:crash(3)
             end
           elseif (self.y > tgsub.y) then
             if (not col_world_top) then
               self.y-=self.speed
             elseif (col_sub_top) then
               self.y+=self.speed+5
-              tgsub:crash()
+              tgsub:crash(3)
             end
           end
         end
