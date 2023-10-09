@@ -101,7 +101,7 @@ function i_sub()
         self.torp_loading = 0
       end
     end,
-    crash = function(self)
+    crash = function(self, dmg)
       shake_int = 6
       sfx(4)
       add_sparks(self.x+4, self.y+8, 40)
@@ -109,7 +109,11 @@ function i_sub()
       add_sparks(self.x+12, self.y+12, 40)
 
       -- reduce hull
-      if (self.hull > 0) self.hull-=5
+      if (self.hull > 0 and dmg == nil) then
+        self.hull-=5
+      elseif (self.hull > 0) then
+        self.hull-=dmg
+      end
 
       if (self.hull <= 0) then
         extcmd('reset')
