@@ -16,7 +16,7 @@ function i_shark()
     y=20;
     w=16;
     h=8;
-    speed=.2;
+    speed=.3;
     flip_x=true; -- left
     patrol_t=0;
     swim_frames={};
@@ -33,13 +33,18 @@ function i_shark()
     end;
 
     collide_w_bullet=function(self)
-
       for i, b in pairs(tgsub.torpedoes) do
-        if (check_collision(self, b)) then
+        if (self.state != 'dead' and check_collision(self, b)) then
           self:kill()
+          b:explode()
           b:destroy()
-
+        elseif (self.state == 'dead' and check_collision(self, b)) then
           add_explosion(self.x+4, self.y, 40)
+
+          breakup(self.x, self.y, 6)
+          b:explode()
+          b:destroy()
+          self:destroy()
         end
       end
     end;
@@ -88,7 +93,7 @@ function i_shark()
         -- watch for tgsub and give chase
         if (dist_to_sub < 45) then
           self.state = 'chase'
-          self.speed = .3
+          self.speed = .5
         else
           self.state = 'patrol'
         end

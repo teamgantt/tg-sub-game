@@ -1,5 +1,5 @@
 function i_sub()
-  def_friction=.95
+  def_friction=.90
 	sub_gravity=0.001
   sub_friction=def_friction
   torpedo = class {
@@ -8,9 +8,9 @@ function i_sub()
     y=0;
     dx=0;
     dy=0;
-    w=8;
-    h=8;
-    speed=1.5;
+    w=4;
+    h=4;
+    speed=3;
     timer=0;
     is_active=false;
     flipx=false;
@@ -24,8 +24,8 @@ function i_sub()
     end;
     update=function(self)
       if (not self.is_active) then
-        self.timer+=1
-        self.dy=.1
+        self.timer+=2
+        self.dy=.3
 
         if (self.timer > 45) then
           self.is_active = true
@@ -53,14 +53,17 @@ function i_sub()
       -- handle collisionss
       if (collide_map(self, 'right', 0) or collide_map(self, 'left', 0)) then
         self:destroy()
-        add_explosion(self.x+4, self.y, 40)
-        sfx(12)
+        self:explode()
       end
 
       -- if outside of camera bounds, remove
       if (self.x < cam_x or self.x > cam_x+128) then
         self:destroy()
       end
+    end;
+    explode=function(self)
+      add_explosion(self.x+4, self.y, 40)
+      sfx(12)
     end;
     draw=function(self)
       spr(62, self.x, self.y, 1, 1, self.flipx)
@@ -77,14 +80,14 @@ function i_sub()
     mode='claw', -- claw, torpedo, diver
     hull=100,
     x=20,
-    y=190,
+    y=40,
     w=16,
     h=13,
     dx=0,
     dy=0,
     max_dx=2,
     max_dy=2,
-    speed=.2,
+    speed=.25,
     flipx=false,
     claw_len=0,
     claw={
@@ -95,8 +98,13 @@ function i_sub()
       is_open=true,
       cargo=nil,
     },
+    repair=function(self)
+      if (self.hull < 100) then
+        self.hull=100
+      end
+    end,
     shoot = function(self)
-      if (self.mode == 'torpedo' and self.torp_loading >= 18) then
+      if (self.mode == 'torpedo' and self.torp_loading >= 16) then
         sfx(9)
         add(self.torpedoes, torpedo(self.x+8, self.y+8, self.dx, self.dy, self.flipx))
         self.torp_loading = 0
@@ -125,15 +133,15 @@ function i_sub()
 
   prop_bubbles={
 		elapsed=0,
-		step=function(timing)
+		step=function(timing,life)
 			prop_bubbles.elapsed+=timing
 			if (prop_bubbles.elapsed >= 1) then
 				prop_bubbles.elapsed=0
         sfx(0)
 				if tgsub.dx<0 then
-          add_bubble(tgsub.x+16, tgsub.y +8,'l', rnd_between(20,40))
+          add_bubble(tgsub.x+16, tgsub.y +8,'l', rnd_between(20,40), life)
 				else
-          add_bubble(tgsub.x, tgsub.y +8,'r', rnd_between(20,40))
+          add_bubble(tgsub.x, tgsub.y +8,'r', rnd_between(20,40), life)
 				end
 			end
 		end
@@ -170,8 +178,8 @@ function u_sub()
     else
       tgsub.dx-=tgsub.speed
       tgsub.flipx = true
-      prop_bubbles.step(.05)
-      prop_bubbles.step(.03)
+      prop_bubbles.step(.1)
+
       sfx(1)
     end
 	end -- left
@@ -182,8 +190,7 @@ function u_sub()
     else
       tgsub.dx+=tgsub.speed
       tgsub.flipx = false
-      prop_bubbles.step(.05)
-      prop_bubbles.step(.03)
+      prop_bubbles.step(.1)
       sfx(1)
     end
 	end -- right
@@ -196,7 +203,7 @@ function u_sub()
       and player.mode != 'diver'
       and not collide_map(tgsub, 'down', 0)) then
     tgsub.dy+=tgsub.speed
-    prop_bubbles.step(.03, 90)
+    prop_bubbles.step(.1, 90)
     sfx(2)
 	end
 
@@ -206,7 +213,7 @@ function u_sub()
     and player.mode != 'diver'
     and not collide_map(tgsub, 'up', 0))) then
     tgsub.dy-=tgsub.speed
-    prop_bubbles.step(.03, 90)
+    prop_bubbles.step(.1, 90)
     sfx(2)
   end
 
@@ -312,7 +319,7 @@ function u_sub()
   end
 
   --every 1/10 second, update torpedo load time
-  if (tick%6 == 0) tgsub.torp_loading+=1
+  if (tick%6 == 0) tgsub.torp_loading+=2
 
   -- update torpedoes
   for torpedo in all(tgsub.torpedoes) do

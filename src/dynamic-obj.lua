@@ -1,4 +1,6 @@
 function i_dyn_objs()
+  dyn_obj_grav=.5
+  treasure_types = {"coin", "wrench"}
   dyn_obj = class {
     init = function(self, type, x, y, w, h, spr_num)
       self.type = type
@@ -23,11 +25,30 @@ function i_dyn_objs()
       self.is_hooked = false
       self.show_hint = false
       self.is_open = false
-    end,
+    end;
+
+    collide_w_bullet=function(self)
+      for i, b in pairs(tgsub.torpedoes) do
+        if (check_collision(self, b)) then
+          add_explosion(self.x+4, self.y, 50)
+          explode(self.x,self.y,4)
+          b:destroy()
+          self:destroy()
+        end
+      end
+    end;
+
+    destroy = function(self)
+      del(world.chests, self)
+    end;
+
     update = function(self, dt)
       if self.is_open then
         self.img = 60 -- is_open chest
       end
+
+      -- collide with bullet
+      self:collide_w_bullet()
 
       if (check_collision(self, player.diver)) then
         self.show_hint = true
@@ -36,8 +57,7 @@ function i_dyn_objs()
           sfx(5)
 
           -- spawn treasure
-          local treasure = treasure('coin', self.x, self.y)
-          add(world.treasures, treasure)
+          add(world.treasures, treasure(treasure_types[flr(rnd(2))+1], self.x, self.y))
         end
       else
         self.show_hint = false
@@ -60,21 +80,22 @@ function i_dyn_objs()
       if (self.is_hooked or collide_map(self, 'down', 0)) then
         self.dy = 0
       else
-        self.y+=.2
+        self.y+=dyn_obj_grav
       end
-    end,
+    end;
     draw = function(self)
       if (self.show_hint and not self.is_open) then
         print('⬇️ OPEN', self.x-8, self.y-10, 7)
       end
       spr(self.img, self.x, self.y)
-    end,
+    end;
   }
 
   treasure = dyn_obj:extend {
     init = function(self, type, x, y)
       local spr_num = 61
       if (type == 'pearl') spr_num = 96
+      if (type == 'wrench') spr_num = 116
       dyn_obj.init(self, type, x, y, 8, 8, spr_num)
       self.is_carried = false
       self.is_hooked = false
@@ -113,7 +134,7 @@ function i_dyn_objs()
       if (self.is_carried or collide_map(self, 'down', 0)) then
         self.dy = 0
       else
-        self.y+=.2
+        self.y+=dyn_obj_grav
       end
      -- collide with sub claw
      if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
@@ -132,13 +153,14 @@ function i_dyn_objs()
       if (self.is_hooked or collide_map(self, 'down', 0)) then
         self.dy = 0
       else
-        self.y+=.2
+        self.y+=dyn_obj_grav
       end
 
       -- collect with sub collision
       if (check_collision(self, tgsub)) then
         tgsub.claw.cargo = nil
-        player[self.type]+=1
+        if (player[self.type]!=nil) player[self.type]+=1
+        if (self.type == 'wrench') tgsub:repair()
         sfx(10)
         del(world.treasures, self)
       end

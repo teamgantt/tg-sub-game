@@ -2,6 +2,7 @@
 function i_particles()
   --particles
   bubbles = {}
+  chunks = {}
   sparks = {}
   bubble_life=40
   spark_life=20
@@ -24,6 +25,21 @@ function i_particles()
   add_explosion = function (x,y,life)
     for i=1,6 do
       add_bubble(x,y, nil, life) -- no dir
+    end
+  end
+
+  breakup = function (x,y,color)
+    for i=1,4 do
+      add(chunks, {
+        x=x,
+        y=y,
+        t=0,
+        c=color,
+        -- dx and dy are random in both directions
+        dx=rnd(1)-.5/i,
+        dy=rnd(1)-.5/i,
+        life=spark_life,
+      }) -- no dir
     end
   end
 
@@ -76,6 +92,16 @@ function u_particles()
     fx.y+=fx.dy
     fx.x+=fx.dx
   end
+
+  for fx in all(chunks) do
+    --lifetime
+    fx.t+=1
+    if fx.t>fx.life then del(chunks,fx) end
+
+    --move
+    fx.y+=fx.dy
+    fx.x+=fx.dx
+  end
 end
 
 function d_particles()
@@ -107,6 +133,13 @@ function d_particles()
     local c=10
     -- draw spark
     pset(x,y,c)
+  end
+
+  for fx in all(chunks) do
+    local x=fx.x
+    local y=fx.y
+    -- draw spark
+    rectfill(x,y,x+2,y+2,fx.c)
   end
 end
 
