@@ -45,6 +45,7 @@ function i_shark()
           b:explode()
           b:destroy()
           self:destroy()
+          gain_trophy('and_stay_dead')
         end
       end
     end;
