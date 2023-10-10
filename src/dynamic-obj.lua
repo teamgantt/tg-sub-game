@@ -29,7 +29,7 @@ function i_dyn_objs()
 
     collide_w_bullet=function(self)
       for i, b in pairs(tgsub.torpedoes) do
-        if (check_collision(self, b)) then
+        if (not self.is_hooked and check_collision(self, b)) then
           add_explosion(self.x+4, self.y, 50)
           explode(self.x,self.y,4)
           b:destroy()
