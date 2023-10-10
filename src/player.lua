@@ -1,6 +1,6 @@
 function i_player()
   map_start=0
-  map_end=256
+  map_end=1024
   diver_friction=.85
   diver_gravity=1
   diver_jump_power=0.2

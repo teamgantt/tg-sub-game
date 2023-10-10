@@ -2,7 +2,7 @@
 function i_world()
   wave_timing = 0.075
   wave_frames={99,100,101,102}
-  map_cell_w = 95
+  map_cell_w = 128
   map_cell_h = 63
 
   world={
@@ -72,7 +72,7 @@ function d_world()
   cls(1)
   rectfill(0,0,1024,world.water_surface,12) --sky
 
-  map(0,0,0,0,95,64)
+  map(0,0,0,0,128,64)
 
   foreach(world.waves, draw_obj)
 

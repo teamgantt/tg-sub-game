@@ -4,7 +4,7 @@ function i_camera()
 
   --map limits
   map_start=0
-  map_end=768
+  map_end=1024
 
   shake = function()
     -- stop('shake '..shake_int, 20, 20, 11)
