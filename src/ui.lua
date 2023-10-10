@@ -1,5 +1,11 @@
 function i_ui()
-
+  toast_t=0
+  toast_text='brute force'
+  toast_y=128
+  display_toast = function(text)
+    toast_t = 120
+    toast_text = text
+  end
 end
 
 function u_ui()
@@ -65,5 +71,16 @@ function d_ui()
     print('AIR', cam_x+2, cam_y+115, 12)
     line(cam_x+3+x_off, cam_y+116+y_off, cam_x+player.diver.o2+x_off, cam_y+116+y_off, 12)
     rect(cam_x+2+x_off, cam_y+115+y_off, cam_x+60+x_off, cam_y+117+y_off, 7)
+  end
+
+  if (toast_t > 0) then
+    -- slide in
+    if (toast_y > 0) then
+      if (toast_y>124) toast_y-=.5
+    end
+    rectfill(cam_x, cam_y+toast_y-12, cam_x+128, cam_y+toast_y, 0)
+    spr(117, cam_x+3, cam_y+toast_y-10)
+    print(toast_text, cam_x+14, cam_y+toast_y-8, 7)
+    toast_t = toast_t - 1
   end
 end

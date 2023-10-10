@@ -31,9 +31,10 @@ function i_dyn_objs()
       for i, b in pairs(tgsub.torpedoes) do
         if (not self.is_hooked and check_collision(self, b)) then
           add_explosion(self.x+4, self.y, 50)
-          explode(self.x,self.y,4)
+
           b:destroy()
           self:destroy()
+          gain_trophy('brute_force')
         end
       end
     end;
