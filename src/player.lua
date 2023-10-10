@@ -1,11 +1,9 @@
 function i_player()
   map_start=0
   map_end=256
-  diver_friction=.75
-  diver_gravity=0.2
+  diver_friction=.85
+  diver_gravity=1
   diver_jump_power=0.2
-  diver_fall_gravity=0.5
-  jump_boost=5
   tick=0
 
   walk_anim={
@@ -30,7 +28,7 @@ function i_player()
       h = 0,
       dx = 0,
       dy = 0,
-      speed = 0.4,
+      speed = 0.8,
       o2 = 60,
       walk_frames={4,5,6,5},
       reset_position = function(self)

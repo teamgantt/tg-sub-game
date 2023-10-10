@@ -4,6 +4,7 @@ function i_world()
   wave_frames={99,100,101,102}
   map_cell_w = 95
   map_cell_h = 63
+  x_off = 0
 
   world={
     chests={},
@@ -70,15 +71,25 @@ end
 
 function d_world()
   cls(1)
+  if (tgsub.dx > .5) then
+    x_off-=.5
+  elseif (flr(tgsub.dx) == 0) then
+    -- do nothing
+  elseif (tgsub.dx < -.5) then
+    x_off+=.5
+  end
+
   rectfill(0,0,1024,world.water_surface,12) --sky
   -- map(96,27,0,208,128)
   -- map(96,27,0+16,208,128)
   -- map(96,27,0+64,232,128)
 
   -- draw some background tiles
-  for i=1, 16 do
-    map(96,27,0+(i*32),208,128)
-  end
+  -- for i=0, 20 do
+  --   map(100,27,-16+(i*48)+x_off/1.5,208,128)
+  -- end
+
+
 
   map(0,0,0,0,95,64)
 

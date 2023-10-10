@@ -1,6 +1,7 @@
 function i_sub()
+  def_friction=.95
 	sub_gravity=0.001
-  sub_friction=.95
+  sub_friction=def_friction
   torpedo = class {
     name='torpedo';
     x=0;
@@ -69,23 +70,23 @@ function i_sub()
     end;
   }
 
-  tgsub = {
-    torp_loading = 0,
-    torpedoes = {},
-    show_menu = false,
-    mode = 'claw', -- claw, torpedo, diver
-    hull = 100,
-    x = 20,
-    y = 40,
-    w = 16,
-    h = 13,
-    dx = 0,
-    dy = 0,
-    max_dx = 0.7,
-    max_dy = 0.65,
-    speed = 0.5,
-    flipx = false,
-    claw_len = 0,
+  tgsub={
+    torp_loading=0,
+    torpedoes={},
+    show_menu=false,
+    mode='claw', -- claw, torpedo, diver
+    hull=100,
+    x=20,
+    y=190,
+    w=16,
+    h=13,
+    dx=0,
+    dy=0,
+    max_dx=2,
+    max_dy=2,
+    speed=.2,
+    flipx=false,
+    claw_len=0,
     claw={
       x=0,
       y=0,
@@ -140,11 +141,6 @@ function i_sub()
 end
 
 function u_sub()
-  -- shake screen
-  --apply sub_friction
-  tgsub.dy*=sub_friction
-  tgsub.dx*=sub_friction
-
   -- toggle between sub and diver on pressing x
   if (btnp(❎) and player.diver_active) then
     if (player.mode == 'diver') then
@@ -174,12 +170,10 @@ function u_sub()
     else
       tgsub.dx-=tgsub.speed
       tgsub.flipx = true
-      tgsub.dy=0
       prop_bubbles.step(.05)
       prop_bubbles.step(.03)
       sfx(1)
     end
-    tgsub.dy=-sub_gravity
 	end -- left
 
 
@@ -192,10 +186,10 @@ function u_sub()
       prop_bubbles.step(.03)
       sfx(1)
     end
-    tgsub.dy=-sub_gravity
 	end -- right
 
 
+  -- sub up and down
 	if (not btn(🅾️)
       and not btn(❎)
       and btn(⬇️)
@@ -227,15 +221,15 @@ function u_sub()
     tgsub.claw.is_open = true
 
     if (btn(⬇️) and not collide_map(tgsub.claw, 'down', 0)) then
-      tgsub.claw_len+=.5
+      tgsub.claw_len+=1
       sfx(8)
     end
   elseif btn(🅾️) and player.mode == 'sub' and tgsub.mode == 'claw' then
     tgsub.claw.is_open = true
     sub_friction = .7
   elseif not btn(🅾️) then
-    sub_friction = .95
-    if (tgsub.claw_len > 0) tgsub.claw_len-=.5
+    sub_friction = def_friction
+    if (tgsub.claw_len > 0) tgsub.claw_len-=1
     if (tgsub.claw.is_open) sfx(9)
     tgsub.claw.is_open = false
 
@@ -250,7 +244,6 @@ function u_sub()
   -- SUB MODE
   -- apply tgsub movement
   if tgsub.dy>0 then
-    tgsub.dy=limit_speed(tgsub.dy,tgsub.max_dy)
 
     if collide_map(tgsub,"down",0) then
       tgsub.y-=((tgsub.y+tgsub.h+1)%8)-1
@@ -258,7 +251,6 @@ function u_sub()
       tgsub:crash()
     end
   elseif tgsub.dy<0 then
-    tgsub.dy=limit_speed(tgsub.dy,tgsub.max_dy)
     if collide_map(tgsub,"up",0) then
       tgsub.dy=-tgsub.dy
       tgsub:crash()
@@ -267,18 +259,29 @@ function u_sub()
 
   -- check for collisions left and right
   if tgsub.dx<0 then
-    tgsub.dx=limit_speed(tgsub.dx,tgsub.max_dx)
     if collide_map(tgsub,"left",0) then
       tgsub.dx=-tgsub.dx
       tgsub:crash()
     end
   elseif tgsub.dx>0 then
-    tgsub.dx=limit_speed(tgsub.dx,tgsub.max_dx)
     if collide_map(tgsub,"right",0) then
       tgsub.dx=-tgsub.dx
       tgsub:crash()
     end
   end
+
+
+  if (tgsub.dy > 0 and tgsub.dy < .1) tgsub.dy = 0
+  if (tgsub.dy < 0 and tgsub.dy > -.1) tgsub.dy = 0
+  if (tgsub.dx > 0 and tgsub.dx < .1) tgsub.dx = 0
+  if (tgsub.dx < 0 and tgsub.dx > -.1) tgsub.dx = 0
+
+  tgsub.dx=limit_speed(tgsub.dx,tgsub.max_dx)
+  tgsub.dy=limit_speed(tgsub.dy,tgsub.max_dy)
+
+  --apply sub_friction
+  tgsub.dy*=sub_friction
+  tgsub.dx*=sub_friction
 
   -- collide with player to pick up
   if (tgsub.mode != 'diver' and check_collision(tgsub, player.diver)) then
@@ -304,8 +307,8 @@ function u_sub()
   end
 
   --limit tgsub.y to water surface
-  if tgsub.y<world.water_surface-2 then
-    tgsub.y=world.water_surface-2
+  if tgsub.y<world.water_surface-4 then
+    tgsub.y=world.water_surface-4
   end
 
   --every 1/10 second, update torpedo load time
