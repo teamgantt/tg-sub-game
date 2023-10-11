@@ -9,7 +9,7 @@ function i_shark()
   };
 
   swimmer = class {
-    state='patrol'; -- patrol, chase, attacking, dead
+    state='patrol'; -- patrol, chase, attacking, dead, caught
     type='shark'; -- shark, fish, crab
     dead_t=0;
     x=20;
@@ -18,6 +18,8 @@ function i_shark()
     h=8;
     speed=.3;
     flip_x=true; -- left
+    is_hooked=false;
+    was_hooked=false;
     patrol_t=0;
     swim_frames={};
     attack_frames={};
@@ -30,6 +32,24 @@ function i_shark()
       self.h=h or self.h
       self.type=type or self.type
       self.flip_x=flip_x or self.flip_x
+    end;
+
+
+    travel_with_claw = function(self)
+      if (self.is_hooked) then
+        self.x = tgsub.claw.x-4
+        self.y = tgsub.claw.y
+      end
+    end;
+
+    captured_by_sub=function(self)
+      if (self.is_hooked and check_collision(self, tgsub)) then
+        tgsub.claw.cargo = nil
+        if (self.state!='dead' and self.type=='fish') gain_trophy('for_my_aquarium')
+        if (self.state!='dead' and self.type=='shark') gain_trophy('super_wrangler')
+        if (self.state=='dead' and self.type=='fish') gain_trophy('for_my_wall')
+        self:destroy()
+      end
     end;
 
     collide_w_bullet=function(self)
@@ -47,6 +67,18 @@ function i_shark()
           self:destroy()
           gain_trophy('and_stay_dead')
         end
+      end
+    end;
+
+    collide_w_claw=function(self)
+      if (check_collision(self, tgsub.claw) and not tgsub.claw.is_open) then
+        if (not self.is_hooked) sfx(9)
+        self.is_hooked = true
+        self.was_hooked = true
+        tgsub.cargo=self
+      else
+        self.is_hooked = false
+        tgsub.cargo=nil
       end
     end;
 
@@ -89,8 +121,13 @@ function i_shark()
       -- if collide with bullet, die
       self:collide_w_bullet()
 
+      -- if collide with claw, get caught
+      self:collide_w_claw()
+      self:travel_with_claw()
+      self:captured_by_sub()
+
       -- live sharks patrol back and forth
-      if (self.state != 'dead') then
+      if (self.state != 'dead' and not self.is_hooked) then
         -- watch for tgsub and give chase
         if (dist_to_sub < 45) then
           self.state = 'chase'
@@ -166,6 +203,11 @@ function i_shark()
         self:animate(3)
       end
 
+      if (not self.is_hooked and self.was_hooked) then
+        self.was_hooked = false
+        gain_trophy('catch_and_release')
+      end
+
     end;
 
     draw=function(self)
@@ -207,9 +249,12 @@ function i_shark()
 
       -- if collide with bullet, die
       self:collide_w_bullet()
+      self:collide_w_claw()
+      self:travel_with_claw()
+      self:captured_by_sub()
 
       -- live fishs patrol back and forth
-      if (self.state != 'dead') then
+      if (self.state != 'dead' and not self.is_hooked) then
         -- watch for tgsub and give chase
         if (self.state == 'patrol') then
           if (self.patrol_t < self.patrol_time) then
@@ -248,6 +293,10 @@ function i_shark()
         self:animate(3)
       end
 
+      if (not self.is_hooked and self.was_hooked) then
+        gain_trophy('no_sushi_tonight')
+        self.was_hooked = false
+      end
     end;
 
     draw=function(self)

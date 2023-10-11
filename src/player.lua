@@ -143,6 +143,7 @@ function u_player()
       diver.dy=0
       diver.y-=((diver.y+diver.h+1)%8)-1
       diver.on_ground=true
+      gain_trophy('one_small_step')
     else
       diver.on_ground=false
     end
@@ -228,7 +229,7 @@ function u_player()
   -- collide with sub from bottom
   -- enter it after colliding
   if (check_collision(diver, tgsub) and diver.dy < 0) then
-    tgsub.mode = 'sub'
+    tgsub.mode = 'claw'
     player.mode = 'sub'
     player.diver_active = false
     diver:reset_position()
