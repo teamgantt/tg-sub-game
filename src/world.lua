@@ -37,7 +37,8 @@ function i_world()
       spr(wave_frames[flr(self.fr)+1], self.x, self.y)
     end
   }) end)
-
+  -- add an alien toy
+  add(world.treasures, treasure('alien',456,496))
 end
 
 function u_world()
@@ -60,12 +61,10 @@ function u_world()
   end
 
   -- -- maintain fish
-  if (#world.fish < 5) then
+  if (#world.fish < 10) then
     local f = fish(rnd_between(0, 128)*8, rnd_between(0, 128)*8)
     add(world.fish, f)
   end
-
-
 end
 
 function d_world()
@@ -88,6 +87,8 @@ function d_world()
 
   -- draw fish
   foreach(world.fish, draw_obj)
+
+  -- print('fish: '..#world.fish, cam_x+30, cam_y+20, 7)
 end
 
 

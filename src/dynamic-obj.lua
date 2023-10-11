@@ -14,6 +14,30 @@ function i_dyn_objs()
       self.dx = 0
     end;
 
+    collide_w_claw=function(self)
+      if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
+        self.is_hooked = true
+        tgsub.claw.cargo = self
+      else
+        self.is_hooked = false
+      end
+    end;
+
+    travel_with_claw = function(self)
+      if (self.is_hooked) then
+        self.x = tgsub.claw.x-4
+        self.y = tgsub.claw.y
+      end
+    end;
+
+    fall_if_not_hooked = function(self)
+      if (self.is_hooked or collide_map(self, 'down', 0)) then
+        self.dy = 0
+      else
+        self.y+=dyn_obj_grav
+      end
+    end;
+
     draw = function(self)
       spr(self.img, self.x, self.y, self.w/8, self.h/8, false, false)
     end;
@@ -64,25 +88,9 @@ function i_dyn_objs()
         self.show_hint = false
       end
 
-      -- collide with sub claw
-      if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
-        self.is_hooked = true
-        tgsub.claw.cargo = self
-      else
-        self.is_hooked = false
-      end
-
-      -- if treasure is hooked, move with claw
-      if (self.is_hooked) then
-        self.x = tgsub.claw.x-4
-        self.y = tgsub.claw.y
-      end
-
-      if (self.is_hooked or collide_map(self, 'down', 0)) then
-        self.dy = 0
-      else
-        self.y+=dyn_obj_grav
-      end
+      self:collide_w_claw()
+      self:travel_with_claw()
+      self:fall_if_not_hooked()
     end;
     draw = function(self)
       if (self.show_hint and not self.is_open) then
@@ -97,6 +105,7 @@ function i_dyn_objs()
       local spr_num = 61
       if (type == 'pearl') spr_num = 96
       if (type == 'wrench') spr_num = 116
+      if (type == 'alien') spr_num = 118
       dyn_obj.init(self, type, x, y, 8, 8, spr_num)
       self.is_carried = false
       self.is_hooked = false
@@ -106,7 +115,7 @@ function i_dyn_objs()
       if (check_collision(self, player.diver)) then
         self.show_hint = true
 
-        if (btnp(⬇️) and not self.is_carried) then
+        if (player.mode == 'diver' and btnp(⬇️) and not self.is_carried) then
           self.is_carried = true
           sfx(7)
         elseif ((btnp(⬇️)) and self.is_carried) then
@@ -130,38 +139,19 @@ function i_dyn_objs()
         self.is_carried = false
       end
 
-      -- handle world collisions
-      -- if treasure is not carried, collide with world
-      if (self.is_carried or collide_map(self, 'down', 0)) then
-        self.dy = 0
-      else
-        self.y+=dyn_obj_grav
-      end
-     -- collide with sub claw
-     if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
-        self.is_hooked = true
-        tgsub.claw.cargo = self
-      else
-        self.is_hooked = false
-      end
-
-      -- if treasure is hooked, move with claw
-      if (self.is_hooked) then
-        self.x = tgsub.claw.x-4
-        self.y = tgsub.claw.y
-      end
-
-      if (self.is_hooked or collide_map(self, 'down', 0)) then
-        self.dy = 0
-      else
-        self.y+=dyn_obj_grav
-      end
+      self:collide_w_claw()
+      self:travel_with_claw()
+      self:fall_if_not_hooked()
 
       -- collect with sub collision
       if (check_collision(self, tgsub)) then
         tgsub.claw.cargo = nil
         if (player[self.type]!=nil) player[self.type]+=1
-        if (self.type == 'wrench') tgsub:repair()
+        if (self.type == 'wrench') then
+          tgsub:repair()
+          gain_trophy('repair_man')
+        end
+        if (self.type == 'alien') gain_trophy('the_claaaw')
         sfx(10)
         del(world.treasures, self)
       end

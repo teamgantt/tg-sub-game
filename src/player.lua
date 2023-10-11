@@ -143,6 +143,7 @@ function u_player()
       diver.dy=0
       diver.y-=((diver.y+diver.h+1)%8)-1
       diver.on_ground=true
+      gain_trophy('one_small_step')
     else
       diver.on_ground=false
     end

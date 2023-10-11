@@ -8,10 +8,6 @@ function i_ui()
   end
 end
 
-function u_ui()
-
-end
-
 function d_ui()
   local x_off=18 --bar offsets
   local y_off=2
@@ -47,19 +43,24 @@ function d_ui()
   end
 
   -- current mode
-  print("mode: ❎"..player.mode, cam_x+2, cam_y+2, 9)
 
-  if (mode == 'claw') print("CLAW: 🅾️+⬇️", cam_x+2, cam_y+8, 7)
-  if (mode == 'torpedo') print("TORPEDO: 🅾️", cam_x+3, cam_y+8, 7)
-  if (mode == 'diver') print("DIVER: 🅾️", cam_x+3, cam_y+8, 7)
+  circfill(cam_x+119, cam_y+8, 7, 1)
+  circ(cam_x+119, cam_y+8, 7, 7)
+  if (mode == 'claw') spr(46, cam_x+115, cam_y+4)
+  if (mode == 'torpedo') spr(62, cam_x+114, cam_y+5)
+  if (mode == 'diver') spr(3, cam_x+115, cam_y+4)
 
   -- pearls
-  print("X"..player.pearl, cam_x+116, cam_y+3, 9)
-  spr(96, cam_x+106, cam_y+2)
+  print("X"..player.pearl, cam_x+12, cam_y+3, 9)
+  spr(96, cam_x+2, cam_y+2)
 
   -- treasure
-  print("X"..player.coin, cam_x+116, cam_y+10, 9)
-  spr(61, cam_x+106, cam_y+9)
+  print("X"..player.coin, cam_x+34, cam_y+3, 9)
+  spr(61, cam_x+24, cam_y+2)
+
+  -- trophies
+  print(#current_trophies.."/"..#all_trophies, cam_x+56, cam_y+3, 9)
+  spr(117, cam_x+46, cam_y+2)
 
   -- hull
   print('HULL', cam_x+2, cam_y+120, 10)

@@ -4,10 +4,26 @@ __lua__
 -- super duper diver
 -- by teamgantt
 
+#include src/utils.lua
+#include src/dynamic-obj.lua
+#include src/swimmers.lua
+#include src/collisions.lua
+#include src/world.lua
 #include src/particles.lua
+#include src/player.lua
+#include src/sub.lua
+#include src/camera.lua
+#include src/ui.lua
+#include src/trophies.lua
 
 function _init()
+	class = { init = function()end; extend = function(self, proto) local meta = {}
+    local proto = setmetatable(proto or {},{__index=self, __call=function(_,...) local o=setmetatable({},meta) return o,o:init(...) end})
+    meta.__index = proto ; for k,v in pairs(proto.__ or {}) do meta['__'..k]=v end ; return proto end }
+  setmetatable(class, { __call = class.extend })
   i_particles()
+	selected=1
+	t=0
 
 	diver_bubbles={
 		elapsed=0,
@@ -29,8 +45,27 @@ function _update60()
   u_particles()
 	diver_bubbles.step(.015)
 
-	if (btnp(❎)) then
-		load('tg-sub.p8','back to menu')
+	if (btnp(❎) or btn(🅾️)) then
+		sfx(2)
+		if (selected == 1) then
+			load('tg-sub.p8','back to menu')
+		elseif (selected == 2) then
+			load('trophies.p8','back to menu')
+		end
+	end
+
+	if (t < 60) then
+		t+=1
+	end
+
+	if (btnp(⬆️)) then
+		sfx(1)
+		selected=1
+		t=0
+	elseif (btnp(⬇️)) then
+		sfx(1)
+		selected=2
+		t=0
 	end
 end
 
@@ -43,7 +78,24 @@ function _draw()
 	spr(192,0,96,16,4)
   d_particles()
 
-	print('❎ to dive', 75, 78, 6)
+
+
+	if (selected == 1) then
+		line(66,78,84,78, 9)
+		line(104,78,124,78, 9)
+
+		print('dive', 87, 76, 7)
+		print('trophies', 80, 84, 6)
+	elseif (selected == 2) then
+		line(66,86,78,86, 9)
+		line(112,86,124,86, 9)
+
+		print('dive', 87, 76, 6)
+		print('trophies', 80, 84, 7)
+	end
+
+
+	-- print('❎ to select', 76, 84, 6)
 
 
 	print('copyright 2023 teamgantt', 19, 114, 15)
@@ -310,3 +362,7 @@ fffffffffffffffffffffffffffffffffff9999999999999ffffffffffffffffddd5dddd2fffffff
 __gff__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101010101010101010101010101
+__sfx__
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+180100001905200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
+081000002303228032000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
