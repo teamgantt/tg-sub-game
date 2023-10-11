@@ -153,7 +153,7 @@ function u_sub()
   if (btnp(❎) and player.diver_active) then
     if (player.mode == 'diver') then
       player.mode = 'sub'
-      tgsub.mode = 'sub'
+      tgsub.mode = 'claw'
     end
   -- sub menu
   elseif (btn(❎)) then
@@ -237,11 +237,12 @@ function u_sub()
   elseif not btn(🅾️) then
     sub_friction = def_friction
     if (tgsub.claw_len > 0) tgsub.claw_len-=1
-    if (tgsub.claw.is_open) sfx(9)
     tgsub.claw.is_open = false
 
     -- -- release z to open claw
     tgsub.claw.cargo = nil
+
+    if (tgsub.claw_len < 1) tgsub.claw.is_open = true
   end
 
   -- sync claw position with claw_len

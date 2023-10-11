@@ -228,7 +228,7 @@ function u_player()
   -- collide with sub from bottom
   -- enter it after colliding
   if (check_collision(diver, tgsub) and diver.dy < 0) then
-    tgsub.mode = 'sub'
+    tgsub.mode = 'claw'
     player.mode = 'sub'
     player.diver_active = false
     diver:reset_position()
