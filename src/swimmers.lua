@@ -48,6 +48,7 @@ function i_shark()
         if (self.state!='dead' and self.type=='fish') gain_trophy('for_my_aquarium')
         if (self.state!='dead' and self.type=='shark') gain_trophy('super_wrangler')
         if (self.state=='dead' and self.type=='fish') gain_trophy('for_my_wall')
+        if (self.state!='dead' and self.type=='crab') gain_trophy('crab_n_go')
         self:destroy()
       end
     end;
@@ -115,8 +116,8 @@ function i_shark()
 
       local col_world_left = collide_map(self, 'left', 0)
       local col_world_right = collide_map(self, 'right', 0)
-      local col_world_top = collide_map(self, 'top', 0)
-      local col_world_bottom = collide_map(self, 'bottom', 0)
+      local col_world_top = collide_map(self, 'up', 0)
+      local col_world_bottom = collide_map(self, 'down', 0)
 
       -- if collide with bullet, die
       self:collide_w_bullet()
@@ -244,8 +245,8 @@ function i_shark()
     update=function(self)
       local col_world_left = collide_map(self, 'left', 0)
       local col_world_right = collide_map(self, 'right', 0)
-      local col_world_top = collide_map(self, 'top', 0)
-      local col_world_bottom = collide_map(self, 'bottom', 0)
+      local col_world_top = collide_map(self, 'up', 0)
+      local col_world_bottom = collide_map(self, 'down', 0)
 
       -- if collide with bullet, die
       self:collide_w_bullet()
@@ -305,6 +306,63 @@ function i_shark()
         spr(self.swim_frames[flr(self.fr)], self.x, self.y, 1, 1, self.flip_x)
       elseif (self.state == 'dead') then
         spr(self.swim_frames[1], self.x, self.y, 1, 1, self.flip_x, true)
+      end
+    end;
+  }
+
+  crab = swimmer:extend {
+    init=function(self, x, y)
+      swimmer.init(self, 'crab', x, y, 8, 8, true)
+      self.x=x or self.x
+      self.y=y or self.y
+      self.w=8
+      self.h=8
+      self.speed=.3
+      self.swim_frames={86, 87};
+      self.patrol_time = 60
+    end;
+
+    update=function(self)
+      local col_world_left = collide_map(self, 'left', 0)
+      local col_world_right = collide_map(self, 'right', 0)
+      local col_world_top = collide_map(self, 'up', 0)
+      local col_world_bottom = collide_map(self, 'down', 0)
+
+      self:animate(3)
+      self:collide_w_bullet()
+      self:collide_w_claw()
+      self:travel_with_claw()
+      self:captured_by_sub()
+
+
+      if (not col_world_bottom) then
+        self.y+=.2
+      end
+
+      -- live crabs patrol back and forth
+      if (self.state != 'dead' and not self.is_hooked) then
+        if (self.state == 'patrol') then
+          if (self.patrol_t < self.patrol_time) then
+            if (not col_world_left and self.flip_x) then
+              self.x+=self.speed
+            elseif (col_world_left or not self.flip_x) then
+              self.x-=self.speed
+            end
+          elseif (self.patrol_t >= self.patrol_time) then
+            self.patrol_t = 0
+            self.flip_x = not self.flip_x
+          end
+          self.patrol_t+=1
+        end
+      end
+    end;
+
+    draw=function(self)
+      -- draw crab animated sprite
+      if (self.state == 'patrol') then
+        spr(self.swim_frames[flr(self.fr)], self.x, self.y, 1, 1, self.flip_x)
+      elseif (self.state == 'dead') then
+        spr(self.swim_frames[1], self.x, self.y+3, 1, 1, self.flip_x, true)
       end
     end;
   }

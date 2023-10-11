@@ -10,6 +10,7 @@ function i_world()
     clams={},
     treasures={},
     fish={},
+    crab={},
     waves={},
     shark={},
     water_surface=31
@@ -23,6 +24,7 @@ function i_world()
   replace_tiles(11, function(x,y) add(world.clams, clam(x,y)) end)
   replace_tiles(80, function(x,y) add(world.fish, fish(x,y)) end)
   replace_tiles(68, function(x,y) add(world.shark, shark(x,y)) end)
+  replace_tiles(86, function(x,y) add(world.crab, crab(x,y)) end)
   replace_tiles(99, function(x,y) add(world.waves, {
     x=x,
     y=y,
@@ -46,6 +48,7 @@ function u_world()
   foreach(world.shark, guarded_update)
   foreach(world.chests, guarded_update)
   foreach(world.clams, guarded_update)
+  foreach(world.crab, guarded_update)
   foreach(world.treasures, guarded_update)
   foreach(world.fish, guarded_update)
 
@@ -87,6 +90,9 @@ function d_world()
 
   -- draw fish
   foreach(world.fish, draw_obj)
+
+  -- draw crab
+  foreach(world.crab, draw_obj)
 
   -- print('fish: '..#world.fish, cam_x+30, cam_y+20, 7)
 end

@@ -1,5 +1,5 @@
 function i_trophies()
-  all_trophies_encoded='brute_force;for_my_aquarium;for_my_wall;and_stay_dead;no_sushi_tonight;catch_and_release;super_wrangler;repair_man;the_claaaw;one_small_step'
+  all_trophies_encoded='brute_force;for_my_aquarium;for_my_wall;and_stay_dead;no_sushi_tonight;catch_and_release;super_wrangler;repair_man;the_claaaw;one_small_step;you_raise_me_up;crab_n_go'
   all_trophies={}
   current_trophies={
   }
@@ -11,7 +11,7 @@ function i_trophies()
     local t = dget(i)
     if t > 0 then
       add(current_trophies, all_trophies[i])
-      printh('loaded trophy '..all_trophies[i], 'log')
+      -- printh('loaded trophy '..all_trophies[i], 'log')
     end
   end
 
