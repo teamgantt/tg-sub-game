@@ -93,8 +93,8 @@ function i_sub()
     claw={
       x=0,
       y=0,
-      w=8,
-      h=8,
+      w=6,
+      h=6,
       is_open=true,
       cargo=nil,
     },
@@ -223,11 +223,11 @@ function u_sub()
   end
 
   --if holding z lower claw
-  if (tgsub.mode == 'claw' and btn(🅾️) and btn(⬇️) and player.mode == 'sub') then
+  if (tgsub.mode == 'claw' and btn(🅾️) and player.mode == 'sub') then
     -- holding z an pressing down lowers claw
     tgsub.claw.is_open = true
 
-    if (btn(⬇️) and not collide_map(tgsub.claw, 'down', 0)) then
+    if ( not collide_map(tgsub.claw, 'down', 0)) then
       tgsub.claw_len+=1
       sfx(8)
     end

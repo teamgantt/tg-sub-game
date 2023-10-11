@@ -128,13 +128,8 @@ function i_dyn_objs()
 
       if self.is_carried and player.mode == 'diver' then
         -- hold treasure in front of player depending on direction
-        if player.diver.flipx then
-          self.x = player.diver.x - 8
-          self.y = player.diver.y
-        elseif not player.diver.flipx then
-          self.x = player.diver.x + 8
-          self.y = player.diver.y
-        end
+        self.x = player.diver.x
+        self.y = player.diver.y - 8
       else
         self.is_carried = false
       end

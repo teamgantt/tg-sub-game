@@ -222,6 +222,7 @@ function u_player()
     ) then
     diver.is_hooked = true
     tgsub.claw.cargo = diver
+    gain_trophy('you_raise_me_up')
   else
     diver.is_hooked = false
   end
