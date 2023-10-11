@@ -15,7 +15,7 @@ function i_dyn_objs()
     end;
 
     collide_w_claw=function(self)
-      if (not tgsub.claw.is_open and tgsub.cargo == nil and check_collision(self, tgsub.claw)) then
+      if (not tgsub.claw.is_open and tgsub.claw.cargo == nil and check_collision(self, tgsub.claw)) then
         self.is_hooked = true
         tgsub.claw.cargo = self
       else

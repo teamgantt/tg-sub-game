@@ -186,7 +186,7 @@ function u_player()
   end
 
   -- tick every 60 frames
-  if (tick >= 60) then
+  if (tick >= 30) then
     tick=0
   else
     tick+=1
@@ -221,7 +221,6 @@ function u_player()
       check_collision(diver, tgsub.claw)
     ) then
     diver.is_hooked = true
-    tgsub.claw.cargo = diver
     gain_trophy('you_raise_me_up')
   else
     diver.is_hooked = false

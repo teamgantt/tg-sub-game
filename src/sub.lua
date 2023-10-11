@@ -172,29 +172,29 @@ function u_sub()
   end
 
   --apply controls
-  if (not btn(❎) and btn(⬅️) and player.mode == 'sub') then
-    -- first slow down
-    if tgsub.dx > .1 then tgsub.dx*=sub_friction
-    else
-      tgsub.dx-=tgsub.speed
-      tgsub.flipx = true
-      prop_bubbles.step(.1)
+  if player.mode == 'sub' then
+    if (not btn(❎) and btn(⬅️)) then
+      -- first slow down
+      if tgsub.dx > .1 then tgsub.dx*=sub_friction
+      else
+        tgsub.dx-=tgsub.speed
+        tgsub.flipx = true
+        prop_bubbles.step(.1)
 
-      sfx(1)
-    end
-	end -- left
+        sfx(1)
+      end
+    end -- left
 
-
-	if (not btn(❎) and btn(➡️) and player.mode == 'sub') then
-    if tgsub.dx < -.1 then tgsub.dx*=sub_friction
-    else
-      tgsub.dx+=tgsub.speed
-      tgsub.flipx = false
-      prop_bubbles.step(.1)
-      sfx(1)
-    end
-	end -- right
-
+    if (not btn(❎) and btn(➡️)) then
+      if tgsub.dx < -.1 then tgsub.dx*=sub_friction
+      else
+        tgsub.dx+=tgsub.speed
+        tgsub.flipx = false
+        prop_bubbles.step(.1)
+        sfx(1)
+      end
+    end -- right
+  end
 
   -- sub up and down
 	if (not btn(🅾️)
@@ -236,13 +236,12 @@ function u_sub()
     sub_friction = .7
   elseif not btn(🅾️) then
     sub_friction = def_friction
-    if (tgsub.claw_len > 0) tgsub.claw_len-=1
+    if (tgsub.claw_len > 0 and not collide_map(tgsub.claw, 'up', 0)) tgsub.claw_len-=1
     tgsub.claw.is_open = false
 
-    -- -- release z to open claw
-    tgsub.claw.cargo = nil
-
-    if (tgsub.claw_len < 1) tgsub.claw.is_open = true
+    if (tgsub.claw_len < 1) then
+      tgsub.claw.is_open = true
+    end
   end
 
   -- sync claw position with claw_len

@@ -76,10 +76,10 @@ function i_shark()
         if (not self.is_hooked) sfx(9)
         self.is_hooked = true
         self.was_hooked = true
-        tgsub.cargo=self
+        tgsub.claw.cargo=self
       else
         self.is_hooked = false
-        tgsub.cargo=nil
+        tgsub.claw.cargo=nil
       end
     end;
 
