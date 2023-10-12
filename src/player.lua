@@ -233,7 +233,7 @@ function u_player()
     player.mode = 'sub'
     player.diver_active = false
     diver:reset_position()
-  elseif(check_collision(diver, tgsub) and diver.dy > 0)then
+  elseif(check_collision(diver, tgsub) and player.diver_active and diver.dy > 0)then
     -- diver.dy=tgsub.dy
     diver.y=tgsub.y-diver.h
     diver.x=tgsub.x+4
