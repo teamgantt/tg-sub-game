@@ -1,10 +1,10 @@
 -- checks for flag 0 on a tile
 function collide_map(p,dir,flag)
-  local x=p.x  local y=p.y
-  local w=p.w  local h=p.h
+  local x,y = p.x, p.y
+  local w,h = p.w, p.h
 
-  local x1=0	 local y1=0
-  local x2=0  local y2=0
+  local x1, y1=0,0
+  local x2, y2=0,0
 
   if dir=="left" then
     x1=x-1  y1=y

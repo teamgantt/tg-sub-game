@@ -290,13 +290,6 @@ function u_sub()
   tgsub.dy*=sub_friction
   tgsub.dx*=sub_friction
 
-  -- collide with player to pick up
-  if (tgsub.mode != 'diver' and check_collision(tgsub, player.diver)) then
-    player.mode = 'sub'
-    player.diver_active = false
-    player.diver.o2 = 60
-  end
-
   --apply dx and dy to player position
   tgsub.x+=tgsub.dx
   tgsub.y+=tgsub.dy

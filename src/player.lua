@@ -77,7 +77,7 @@ function u_player()
       if (not collide_map({x=tgsub.x, y=tgsub.y, h=24,w=16}, 'down', 0)) then
         diver.x = tgsub.x+8
         diver.y = tgsub.y+18
-      else
+      else -- else spawn in front of sub
         diver.x = tgsub.x+18
         diver.y = tgsub.y+8
       end
@@ -228,11 +228,16 @@ function u_player()
 
   -- collide with sub from bottom
   -- enter it after colliding
-  if (check_collision(diver, tgsub) and diver.dy < 0) then
+  if (check_collision(diver, tgsub) and (diver.dy < 0 or diver.is_hooked)) then
     tgsub.mode = 'claw'
     player.mode = 'sub'
     player.diver_active = false
     diver:reset_position()
+  elseif(check_collision(diver, tgsub) and diver.dy > 0)then
+    -- diver.dy=tgsub.dy
+    diver.y=tgsub.y-diver.h
+    diver.x=tgsub.x+4
+    gain_trophy('super_surfer')
   end
 
   -- sync location with sub if not active
@@ -245,6 +250,12 @@ function u_player()
   if (diver.is_hooked) then
     diver.x = tgsub.claw.x-4
     diver.y = tgsub.claw.y
+  end
+
+  -- if diver is above water surface, give air
+  if (diver.y < world.water_surface and diver.o2<60) then
+    diver.o2+=1
+    gain_trophy('fresh_air')
   end
 end
 

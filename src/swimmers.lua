@@ -172,14 +172,14 @@ function i_shark()
             end
           end
 
-          if (self.y < tgsub.y) then
+          if (self.y < tgsub.y+8) then
             if (not col_world_bottom) then
               self.y+=self.speed
             elseif (col_sub_bottom) then
               self.y-=self.speed+5
               tgsub:crash(3)
             end
-          elseif (self.y > tgsub.y) then
+          elseif (self.y > tgsub.y+8) then
             if (not col_world_top) then
               self.y-=self.speed
             elseif (col_sub_top) then
