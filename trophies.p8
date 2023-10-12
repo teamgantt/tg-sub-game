@@ -21,6 +21,9 @@ function _init()
   cartdata('super_duper_persist_data')
   cam_x=0
   cam_y=0
+  reset_t=0
+  up_c=7
+  down_c=7
   i_trophies()
 
   trophy_spr_map={
@@ -47,24 +50,42 @@ function _update()
     load('sdd.p8')
   end
 
+  -- hold down  z to reset trophies
+  if (btn(🅾️)) then
+    reset_t+=1
+    if (reset_t>128) then
+      reset_t=0
+      for i=0,63 do
+        dset(i, 0)
+        extcmd('reset')
+      end
+    end
+  else
+    reset_t=0
+  end
 
   -- scroll through trophies
   if (btn(⬆️) and cam_y>0) then
-    cam_y-=1
-  elseif (btn(⬇️) and cam_y<#all_trophies-8) then
-    cam_y+=1
+    cam_y-=2
+    up_c=9
+  elseif (btn(⬇️) and cam_y<#all_trophies+60) then
+    cam_y+=2
+    down_c=9
+  else
+    up_c=7
+    down_c=7
   end
   camera(cam_x, cam_y)
 end
 
 function _draw()
-  cls(1)
+  cls(0)
 
   -- list all trophies
   for i=1, #all_trophies do
     local trophy = all_trophies[i]
-    local x = 14
-    local y = (8 * i)
+    local x = 19
+    local y = (12 * i)+10
     local c = 6
     local sprite = 7
     local s = ""
@@ -72,9 +93,10 @@ function _draw()
     local is_unlocked = idx and idx > 0
 
     -- check if trophy is unlocked
+    sprite = trophy_spr_map[trophy]
+
     if (is_unlocked) then
       c = 9
-      sprite = trophy_spr_map[trophy]
       -- convert to human readable
       local t = split(trophy, '_')
       for i=1, #t do
@@ -83,16 +105,38 @@ function _draw()
     else
       s = "?????"
     end
-
-
     -- draw trophy list
     print(s, x, y+i, c)
-    spr(sprite, x - 10, y+i-2, 1,1)
+    circfill(x-10, y+i+1, 7, 1)
+    rect(x-14, y+i-5, x+128, y+i+8, 1)
+    circfill(x-10, y+i+1, 7, 1)
+    spr(sprite, x - 14, y+i-2, 1,1)
+  end
+
+  -- draw scroll bar
+  rectfill(cam_x+129-12, cam_y, cam_x+127, cam_y+128, 5)
+  local scroll_h = 59 / (#all_trophies+60)
+  local scroll_y = cam_y * scroll_h
+  rectfill(cam_x+129-11, cam_y+scroll_y+60, cam_x+126, cam_y+scroll_y+scroll_h+22, 6)
+
+
+  rectfill(cam_x-2, cam_y, cam_x+128, cam_y+12, 1)  -- draw header
+  spr(7, cam_x+6, cam_y+2, 1,1)
+  line(cam_x,cam_y+12,cam_x+128,cam_y+12, 7)
+  print("sUPER dUPER tROPHIES", cam_x+18, cam_y+3, 9)
+
+
+  -- draw reset warning bar
+  if (reset_t>0) then
+    rectfill(cam_x-2, cam_y, cam_x+128, cam_y+12, 0)
+    print('resetting trophies...', cam_x+22, cam_y+4, 8)
+    line(cam_x,cam_y+12,cam_x+reset_t,cam_y+12, 8)
   end
 
   -- draw back
-  print("❎ back", cam_x+96, cam_y+120, 6)
-  print("⬇️ ⬆️", cam_x+104, cam_y+112, 6)
+  print("❎ back", cam_x+86, cam_y+120, 6)
+  print("⬆️", cam_x+119, cam_y+15, up_c)
+  print("⬇️", cam_x+119, cam_y+121, down_c)
 end
 __gfx__
 00000000000aa0000009a0000000000099956999000000000000000009f9faa0000000000000b000666700000000500000000000000000000000666666660000
@@ -108,8 +152,8 @@ __gfx__
 6666666676777777000000000008e0007789bf77049000040077770000500600000060000000ff00670000aa0006000667767767677767760077eeeddeee7700
 66616666d76777770070700000888e005777777500444444005757000f9999a006565650077099000000a0000ccccc66677676776767677667eeeeeeeeeeee76
 07766e667d7777770080800000887e0015155555000004400077770009f999a060999906cc70f0f0000000a0cccccc66d67d76d767d76d7dd77777777777777d
-00066666d76777678888888800878e005151555500044400070770700f9999a05a9ff9a5c000888800000000006660060dd6d6d6d6d6d6d00dd6d6d6d6d6d6d0
-0066ffff0d7676700888888000888e0015155555004400007007700709f999a05d9999d5cc880000777a7a7a0000000000dd6d6d6d6d6d0000dd6d6d6d6d6d00
+00066666d76777678888888800878e005151555500044400070770700f9999a0509ff905c000888800000000006660060dd6d6d6d6d6d6d00dd6d6d6d6d6d6d0
+0066ffff0d7676700888888000888e0015155555004400007007700709f999a00d9999d0cc880000777a7a7a0000000000dd6d6d6d6d6d0000dd6d6d6d6d6d00
 0000000000d7d7008080080800888e000151555004400000000000000f9999a067944976cccccccccccccccc000000000000dddddddd00000000dddddddd0000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
