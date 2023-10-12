@@ -22,8 +22,8 @@ function _init()
   cam_x=0
   cam_y=0
   reset_t=0
-  up_c=7
-  down_c=7
+  up_c=0
+  down_c=0
   i_trophies()
 
   trophy_spr_map={
@@ -67,13 +67,13 @@ function _update()
   -- scroll through trophies
   if (btn(⬆️) and cam_y>0) then
     cam_y-=2
-    up_c=9
+    up_c=7
   elseif (btn(⬇️) and cam_y<#all_trophies+60) then
     cam_y+=2
-    down_c=9
-  else
-    up_c=7
     down_c=7
+  else
+    up_c=0
+    down_c=0
   end
   camera(cam_x, cam_y)
 end
@@ -114,10 +114,10 @@ function _draw()
   end
 
   -- draw scroll bar
-  rectfill(cam_x+129-12, cam_y, cam_x+127, cam_y+128, 5)
+  rectfill(cam_x+129-12, cam_y, cam_x+127, cam_y+128, 1)
   local scroll_h = 59 / (#all_trophies+60)
   local scroll_y = cam_y * scroll_h
-  rectfill(cam_x+129-11, cam_y+scroll_y+60, cam_x+126, cam_y+scroll_y+scroll_h+22, 6)
+  rectfill(cam_x+129-11, cam_y+scroll_y+60, cam_x+126, cam_y+scroll_y+scroll_h+22, 0)
 
 
   rectfill(cam_x-2, cam_y, cam_x+128, cam_y+12, 1)  -- draw header
