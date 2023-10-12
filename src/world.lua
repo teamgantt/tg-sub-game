@@ -39,8 +39,10 @@ function i_world()
       spr(wave_frames[flr(self.fr)+1], self.x, self.y)
     end
   }) end)
-  -- add an alien toy
+  -- add one-off grabbables
   add(world.treasures, treasure('alien',456,496))
+  add(world.treasures, treasure('nemo',904,160))
+  add(world.treasures, treasure('bottle',104,480))
 end
 
 function u_world()

@@ -106,6 +106,8 @@ function i_dyn_objs()
       if (type == 'pearl') spr_num = 96
       if (type == 'wrench') spr_num = 116
       if (type == 'alien') spr_num = 118
+      if (type == 'nemo') spr_num = 82
+      if (type == 'bottle') spr_num = 104
       dyn_obj.init(self, type, x, y, 8, 8, spr_num)
       self.is_carried = false
       self.is_hooked = false
@@ -147,6 +149,8 @@ function i_dyn_objs()
           gain_trophy('repair_man')
         end
         if (self.type == 'alien') gain_trophy('the_claaaw')
+        if (self.type == 'nemo') gain_trophy('found_nemo')
+        if (self.type == 'bottle') gain_trophy('captain_planet')
         sfx(10)
         del(world.treasures, self)
       end
