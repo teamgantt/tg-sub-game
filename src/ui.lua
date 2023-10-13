@@ -55,12 +55,12 @@ function d_ui()
   spr(96, cam_x+2, cam_y+2)
 
   -- treasure
-  print("X"..player.coin, cam_x+34, cam_y+3, 9)
-  spr(61, cam_x+24, cam_y+2)
+  print("X"..player.coin, cam_x+36, cam_y+3, 9)
+  spr(61, cam_x+26, cam_y+2)
 
   -- trophies
-  print(#current_trophies.."/"..#all_trophies, cam_x+56, cam_y+3, 9)
-  spr(117, cam_x+46, cam_y+2)
+  print(#current_trophies.."/"..#all_trophies, cam_x+60, cam_y+3, 9)
+  spr(117, cam_x+50, cam_y+2)
 
   -- hull
   print('HULL', cam_x+2, cam_y+120, 10)

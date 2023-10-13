@@ -12,8 +12,9 @@ function i_player()
 	}
 
   player = {
-    pearl = 0,
-    coin = 0,
+    pearl = dget(63),
+    coin = dget(62),
+    wrench = dget(61),
     mode = 'sub',-- sub, diver
     diver_active = false,
     diver = {
@@ -38,6 +39,17 @@ function i_player()
         self.dx = 0
         self.dy = 0
         self.o2 = 60
+      end,
+
+      collide_w_bullet=function(self)
+        for i, b in pairs(tgsub.torpedoes) do
+          if (check_collision(self, b)) then
+            add_explosion(self.x+4, self.y, 50)
+
+            b:destroy()
+            gain_trophy('et_tu_brute')
+          end
+        end
       end,
 
       jump = function(self)
@@ -232,13 +244,17 @@ function u_player()
     tgsub.mode = 'claw'
     player.mode = 'sub'
     player.diver_active = false
+    player.diver.on_ground = false
     diver:reset_position()
   elseif(check_collision(diver, tgsub) and player.diver_active and diver.dy > 0)then
-    -- diver.dy=tgsub.dy
-    diver.y=tgsub.y-diver.h
-    diver.x=tgsub.x+4
+    if (not btn(⬇️)) then
+      diver.y=tgsub.y-diver.h
+      diver.x=tgsub.x+4
+    end
     gain_trophy('super_surfer')
   end
+
+  diver:collide_w_bullet()
 
   -- sync location with sub if not active
   if (not player.diver_active) then

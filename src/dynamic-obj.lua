@@ -57,7 +57,7 @@ function i_dyn_objs()
           add_explosion(self.x+4, self.y, 50)
 
           b:destroy()
-          self:destroy()
+          self.is_open=true
           gain_trophy('brute_force')
         end
       end
@@ -143,7 +143,20 @@ function i_dyn_objs()
       -- collect with sub collision
       if (check_collision(self, tgsub)) then
         tgsub.claw.cargo = nil
-        if (player[self.type]!=nil) player[self.type]+=1
+        if (player[self.type]!=nil) then
+          local idx = {
+            wrench = 61,
+            coin = 62,
+            pearl = 63,
+          }
+          player[self.type]+=1
+          local v = dget(idx[self.type])+player[self.type]
+          dset(idx[self.type], v) -- persist pearl coins and wrenches collected
+
+          if (self.type == 'coin' and v > 49) gain_trophy('fat_wallet')
+          if (self.type == 'pearl' and v > 24) gain_trophy('pearl_necklace')
+          if (self.type == 'wrench' and v > 24) gain_trophy('tool_collector')
+        end
         if (self.type == 'wrench') then
           tgsub:repair()
           gain_trophy('repair_man')
