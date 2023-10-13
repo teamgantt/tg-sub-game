@@ -11,3 +11,8 @@ function indexof(tbl, val)
     end
   end
 end
+
+function limit_speed(num,maximum)
+  return mid(-maximum,num,maximum)
+end
+

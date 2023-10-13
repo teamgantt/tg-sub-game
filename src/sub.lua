@@ -352,7 +352,3 @@ function d_sub()
     if (torpedo != nil) torpedo:draw()
   end
 end
-
-function limit_speed(num,maximum)
-  return mid(-maximum,num,maximum)
-end
