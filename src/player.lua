@@ -42,14 +42,14 @@ function i_player()
       end,
 
       collide_w_bullet=function(self)
-        for i, b in pairs(tgsub.torpedoes) do
-          if (check_collision(self, b)) then
-            add_explosion(self.x+4, self.y, 50)
+          for i, b in pairs(tgsub.torpedoes) do
+            if (player.diver_active and check_collision(self, b)) then
+              add_explosion(self.x+4, self.y, 50)
 
-            b:destroy()
-            gain_trophy('et_tu_brute')
+              b:destroy()
+              gain_trophy('et_tu_brute')
+            end
           end
-        end
       end,
 
       jump = function(self)
@@ -246,7 +246,7 @@ function u_player()
     player.diver_active = false
     player.diver.on_ground = false
     diver:reset_position()
-  elseif(check_collision(diver, tgsub) and player.diver_active and diver.dy > 0)then
+  elseif(check_collision(diver, tgsub) and player.diver_active and not diver.on_ground)then
     if (not btn(⬇️)) then
       diver.y=tgsub.y-diver.h
       diver.x=tgsub.x+4
