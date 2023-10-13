@@ -1,5 +1,5 @@
 function i_trophies()
-  all_trophies_encoded='brute_force;for_my_aquarium;for_my_wall;and_stay_dead;no_sushi_tonight;catch_and_release;super_wrangler;repair_man;the_claaaw;one_small_step;you_raise_me_up;crab_n_go;super_surfer;fresh_air;found_nemo;captain_planet;pearl_necklace;fat_wallet;tool_collector;et_tu_brute'
+  all_trophies_encoded='brute_force;for_my_aquarium;for_my_wall;and_stay_dead;no_sushi_tonight;catch_and_release;super_wrangler;repair_man;the_claaaw;one_small_step;you_raise_me_up;crab_n_go;super_surfer;fresh_air;found_nemo;captain_planet;eighty_pearl_necklace;fat_wallet_50;tool_collector_25;et_tu_brute'
   all_trophies={}
   current_trophies={
   }

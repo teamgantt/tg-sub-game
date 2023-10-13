@@ -150,12 +150,12 @@ function i_dyn_objs()
             pearl = 63,
           }
           player[self.type]+=1
-          local v = dget(idx[self.type])+player[self.type]
+          local v = player[self.type]
           dset(idx[self.type], v) -- persist pearl coins and wrenches collected
 
-          if (self.type == 'coin' and v > 49) gain_trophy('fat_wallet')
-          if (self.type == 'pearl' and v > 24) gain_trophy('pearl_necklace')
-          if (self.type == 'wrench' and v > 24) gain_trophy('tool_collector')
+          if (self.type == 'coin' and v > 49) gain_trophy('fat_wallet_50')
+          if (self.type == 'pearl' and v > 79) gain_trophy('eighty_pearl_necklace')
+          if (self.type == 'wrench' and v > 24) gain_trophy('tool_collector_25')
         end
         if (self.type == 'wrench') then
           tgsub:repair()

@@ -44,9 +44,9 @@ function _init()
     fresh_air=26,
     found_nemo=32,
     captain_planet=8,
-    pearl_necklace=34,
-    fat_wallet=33,
-    tool_collector=35,
+    eighty_pearl_necklace=34,
+    fat_wallet_50=33,
+    tool_collector_25=35,
     et_tu_brute=36
   }
 end

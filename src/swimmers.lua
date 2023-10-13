@@ -6,6 +6,7 @@ function i_shark()
     {80,81}, -- tuna
     {82,83}, -- clown
     {84,85}, -- sea horse
+    {88,89}
   };
 
   swimmer = class {
@@ -230,14 +231,14 @@ function i_shark()
   }
 
   fish = swimmer:extend {
-    fish_type=1; -- 1=tuna, 2=clown, 3=sea horse
+    fish_type=1; -- 1=tuna, 2=clown, 3=sea horse, 4=dory
 
     -- will init a random fish type
     init=function(self, x, y)
       swimmer.init(self, 'fish', x, y, 8, 8, true)
       self.x=x or self.x
       self.y=y or self.y
-      self.fish_type=flr(rnd(3))+1
+      self.fish_type=flr(rnd(4))+1
       self.swim_frames=fish_frames[self.fish_type]
       self.patrol_time = flr(rnd(220))+60
     end;
