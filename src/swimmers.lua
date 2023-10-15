@@ -67,7 +67,7 @@ function i_shark()
           b:explode()
           b:destroy()
           self:destroy()
-          gain_trophy('and_stay_dead')
+          gain_trophy('a_bit_much')
         end
       end
     end;
@@ -139,6 +139,16 @@ function i_shark()
         end
 
         if (self.state == 'patrol') then
+          -- handle world collisions
+          if (col_world_left) then
+            self.flip_x = true
+            self.patrol_t = 0 -- reset patrol timer
+          elseif (col_world_right) then
+            self.flip_x = false
+            self.patrol_t = 0 -- reset patrol timer
+          end
+
+          -- handle patrol timer
           if (self.patrol_t < patrol_time) then
             if (self.flip_x) then
               self.x+=self.speed
@@ -149,7 +159,8 @@ function i_shark()
             self.patrol_t = 0
             self.flip_x = not self.flip_x
           end
-          self.patrol_t+=1
+
+          self.patrol_t+=1 -- increment patrol timer
         end
 
         if (self.state == 'chase' or self.state == 'attacking') then
